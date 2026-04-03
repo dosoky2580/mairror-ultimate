@@ -16,6 +16,7 @@ class AppProvider with ChangeNotifier {
   String _targetLangCode = "en";
 
   final Map<String, String> languages = {"إنجليزي": "en", "تركي": "tr", "فرنسي": "fr", "ألماني": "de"};
+  
   final Map<String, Map<String, double>> _voices = {
     "سيف": {"pitch": 0.8, "rate": 0.45},
     "سلمى": {"pitch": 1.2, "rate": 0.5},
@@ -23,11 +24,13 @@ class AppProvider with ChangeNotifier {
     "سارة": {"pitch": 1.0, "rate": 0.4},
   };
 
+  // Getters - السطور اللي كانت ناقصة وموقفة الـ Build
   bool get isDarkMode => _isDarkMode;
   bool get isWorking => _isWorking;
   String get originalText => _originalText;
   String get resultText => _resultText;
   String get selectedVoice => _selectedVoice;
+  List<String> get voiceNames => _voices.keys.toList(); // السطر ده هو اللي كان ناقص!
   ThemeMode get themeMode => _isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
   void toggleTheme() { _isDarkMode = !_isDarkMode; notifyListeners(); }
@@ -55,13 +58,14 @@ class AppProvider with ChangeNotifier {
       var translation = await _translator.translate(text, to: _targetLangCode);
       _resultText = translation.text;
       await speak();
-    } catch (e) { _resultText = "خطأ في الاتصال"; }
+    } catch (e) { _resultText = "تأكد من الإنترنت يا شريكي"; }
     _isWorking = false;
     notifyListeners();
   }
 
   Future<void> speak() async {
     await _flutterTts.setPitch(_voices[_selectedVoice]!["pitch"]!);
+    await _flutterTts.setSpeechRate(_voices[_selectedVoice]!["rate"]!);
     await _flutterTts.speak(_resultText);
   }
 }
