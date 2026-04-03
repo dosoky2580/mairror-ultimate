@@ -1,5 +1,5 @@
 name: mairror_ultimate
-description: تطبيق المرايا المتكامل
+description: تطبيق المرايا المتكامل - نسخة الحوار الثنائي
 version: 1.0.0+1
 environment: { sdk: '>=3.2.0 <4.0.0' }
 dependencies:
@@ -8,6 +8,7 @@ dependencies:
   translator: ^0.1.7
   flutter_tts: ^4.2.2
   share_plus: ^9.0.0
+  speech_to_text: ^7.0.0
 dev_dependencies:
   flutter_test: { sdk: flutter }
   flutter_lints: ^3.0.0
