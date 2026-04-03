@@ -11,20 +11,20 @@ jobs:
       - name: 📦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          # رفعنا النسخة لأحدث إصدار مستقر يرضي flutter_tts
-          flutter-version: '3.22.0' 
-          channel: stable
+          # نستخدم أحدث إصدار مستقر متاح في 2026
+          channel: 'stable'
           
       - name: 🔧 Get dependencies
         run: |
-          # مسح أي عك قديم وبناء المشروع بالاسم الصحيح
-          rm -rf android .dart_tool
+          # مسح شامل لبقايا المحاولات القديمة
+          rm -rf android .dart_tool pubspec.lock
+          # إعادة إنشاء مشروع أندرويد بالاسم المعتمد
           flutter create --project-name mairror_ultimate --platforms android .
-          flutter pub get
+          # تحديث المكتبات لأحدث توافق
+          flutter pub upgrade
           
       - name: 📱 Build APK
         run: |
-          # البناء مع تجاهل أي تعارض في الأيقونات لسرعة الإنجاز
           flutter build apk --release --split-per-abi --no-tree-shake-icons
           
       - name: 📤 Upload APKs
