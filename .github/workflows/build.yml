@@ -14,7 +14,8 @@ jobs:
           channel: stable
       - name: 🔧 Get dependencies
         run: |
-          flutter create . --platforms android
+          # لاحظ هنا غيرنا الاسم لـ mairror_ultimate عشان نرضي Dart
+          flutter create --project-name mairror_ultimate --platforms android .
           flutter clean
           flutter pub get
       - name: 📱 Build APK
