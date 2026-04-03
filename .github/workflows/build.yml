@@ -1,18 +1,15 @@
-name: 🚀 Mairror Ultimate - Super Fast Build
-on: [push, workflow_dispatch]
+name: 🚀 Mairror Ultimate - Force Build
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+        with: { channel: 'stable' }
       - run: |
           flutter create --project-name mairror_ultimate --platforms android .
           flutter pub get
           flutter build apk --debug
       - uses: actions/upload-artifact@v4
-        with:
-          name: mairror-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+        with: { name: mairror-apk, path: build/app/outputs/flutter-apk/app-debug.apk }
