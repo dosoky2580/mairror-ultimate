@@ -1,30 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 
 class AppProvider with ChangeNotifier {
-  // إعدادات المظهر
   ThemeMode _themeMode = ThemeMode.dark;
   ThemeMode get themeMode => _themeMode;
 
-  // إعدادات اللغة (Default: Turkish for your work)
-  String _currentLanguage = 'tr';
-  String get currentLanguage => _currentLanguage;
+  String _translatedText = "";
+  String get translatedText => _translatedText;
 
-  // عداد الإنجازات (Achievements)
-  int _translationCount = 0;
-  int get translationCount => _translationCount;
+  bool _isTranslating = false;
+  bool get isTranslating => _isTranslating;
+
+  // إعداد المترجم (تركي إلى عربي)
+  final onDeviceTranslator = OnDeviceTranslator(
+    sourceLanguage: TranslateLanguage.turkish,
+    targetLanguage: TranslateLanguage.arabic,
+  );
 
   void toggleTheme() {
     _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     notifyListeners();
   }
 
-  void incrementAchievements() {
-    _translationCount++;
+  Future<void> translate(String text) async {
+    if (text.isEmpty) return;
+    _isTranslating = true;
     notifyListeners();
+
+    try {
+      _translatedText = await onDeviceTranslator.translateText(text);
+    } catch (e) {
+      _translatedText = "خطأ في الترجمة: $e";
+    } finally {
+      _isTranslating = false;
+      notifyListeners();
+    }
   }
 
-  void setLanguage(String langCode) {
-    _currentLanguage = langCode;
-    notifyListeners();
+  @override
+  void dispose() {
+    onDeviceTranslator.close();
+    super.dispose();
   }
 }
