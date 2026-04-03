@@ -16,25 +16,24 @@ jobs:
           rm -rf android .dart_tool
           flutter create --project-name mairror_ultimate --platforms android .
           
-          # إجبار ملف Gradle على تعطيل الضغط (السر هنا)
-          sed -i 's/minifyEnabled true/minifyEnabled false/g' android/app/build.gradle
-          sed -i 's/shrinkResources true/shrinkResources false/g' android/app/build.gradle
+          # تعديل ملفات الـ KTS الجديدة لتعطيل الـ R8
+          # بنغير true لـ false في ملفات الـ Kotlin Script
+          if [ -f android/app/build.gradle.kts ]; then
+            sed -i 's/isMinifyEnabled = true/isMinifyEnabled = false/g' android/app/build.gradle.kts
+            sed -i 's/isShrinkResources = true/isShrinkResources = false/g' android/app/build.gradle.kts
+          fi
           
-          # زرع قواعد Proguard شاملة لكل اللغات
-          cat << 'POG' > android/app/proguard-rules.pro
-          -keep class com.google.mlkit.** { *; }
-          -dontwarn com.google.mlkit.**
-          -keep class com.google.android.gms.** { *; }
-          -dontwarn com.google.android.gms.**
-          -keep class com.google.mlkit.vision.text.** { *; }
-          -keep class com.google.mlkit.vision.common.** { *; }
-          POG
-          
+          # احتياطياً لو الملف القديم موجود
+          if [ -f android/app/build.gradle ]; then
+            sed -i 's/minifyEnabled true/minifyEnabled false/g' android/app/build.gradle
+            sed -i 's/shrinkResources true/shrinkResources false/g' android/app/build.gradle
+          fi
+
           flutter pub get
       - name: 📱 Build APK
         run: |
-          # البناء مع تعطيل الـ R8 تماماً من أمر التنفيذ
-          flutter build apk --release --no-shrink --no-tree-shake-icons
+          # البناء بدون أي ضغط نهائياً
+          flutter build apk --release --split-per-abi --no-tree-shake-icons
       - name: 📤 Upload APKs
         uses: actions/upload-artifact@v4
         with:
