@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:translator/translator.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:flutter/services.dart';
 
 class AppProvider with ChangeNotifier {
   final GoogleTranslator _translator = GoogleTranslator();
@@ -26,6 +24,9 @@ class AppProvider with ChangeNotifier {
   String get resultText => _resultText;
   String get selectedVoice => _selectedVoice;
   List<String> get voiceNames => _voices.keys.toList();
+  
+  // السطر اللي كان عامل المشكلة:
+  ThemeMode get themeMode => _isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
   void toggleTheme() { _isDarkMode = !_isDarkMode; notifyListeners(); }
   void setVoice(String name) { _selectedVoice = name; notifyListeners(); }
@@ -47,13 +48,5 @@ class AppProvider with ChangeNotifier {
     await _flutterTts.setPitch(_voices[_selectedVoice]!["pitch"]!);
     await _flutterTts.setSpeechRate(_voices[_selectedVoice]!["rate"]!);
     await _flutterTts.speak(_resultText);
-  }
-
-  void copyToClipboard() {
-    Clipboard.setData(ClipboardData(text: _resultText));
-  }
-
-  void shareContent() {
-    Share.share(_resultText);
   }
 }
