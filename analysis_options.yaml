@@ -1,0 +1,13 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    - avoid_print
+    - prefer_const_constructors
+    - always_require_non_null_named_parameters
+    - annotate_overrides
+    - camel_case_types
+    - library_names
+    - file_names
+    - valid_regexps
+    - curly_braces_in_flow_control_structures

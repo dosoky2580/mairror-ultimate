@@ -1,15 +1,20 @@
-name: 🚀 Mairror Ultimate - Force Build
+name: 🛡️ Mairror Ultimate - Secure Build
 on: [push]
 jobs:
-  build:
+  validate_and_build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with: { channel: 'stable' }
-      - run: |
-          flutter create --project-name mairror_ultimate --platforms android .
+      
+      - name: 🔍 الفحص الأمني والقانوني (The Filter)
+        run: |
           flutter pub get
-          flutter build apk --debug
+          flutter analyze || exit 1  # لو فيه غلطة مسار أو كود، الـ Build يقف هنا فوراً
+
+      - name: 🏗️ بناء الـ APK (بعد موافقة الفلتر)
+        run: flutter build apk --debug
+
       - uses: actions/upload-artifact@v4
         with: { name: mairror-apk, path: build/app/outputs/flutter-apk/app-debug.apk }
