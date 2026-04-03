@@ -5,13 +5,12 @@ class AppProvider with ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.dark;
   ThemeMode get themeMode => _themeMode;
 
-  String _translatedText = "";
+  String _translatedText = "الترجمة ستظهر هنا...";
   String get translatedText => _translatedText;
 
   bool _isTranslating = false;
   bool get isTranslating => _isTranslating;
 
-  // إعداد المترجم (تركي إلى عربي)
   final onDeviceTranslator = OnDeviceTranslator(
     sourceLanguage: TranslateLanguage.turkish,
     targetLanguage: TranslateLanguage.arabic,
@@ -26,20 +25,13 @@ class AppProvider with ChangeNotifier {
     if (text.isEmpty) return;
     _isTranslating = true;
     notifyListeners();
-
     try {
       _translatedText = await onDeviceTranslator.translateText(text);
     } catch (e) {
-      _translatedText = "خطأ في الترجمة: $e";
+      _translatedText = "خطأ: تأكد من تحميل حزمة اللغة";
     } finally {
       _isTranslating = false;
       notifyListeners();
     }
-  }
-
-  @override
-  void dispose() {
-    onDeviceTranslator.close();
-    super.dispose();
   }
 }
