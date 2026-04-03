@@ -1,23 +1,31 @@
-name: 🛡️ Mairror Ultimate - Secure Build
+name: 🛡️ Mairror Ultimate - The Final Masterpiece
 on: [push]
 jobs:
-  validate_and_build:
+  build_final:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with: { channel: 'stable' }
-      
-      - name: 🏗️ إعادة بناء هيكل المشروع
+
+      - name: 🏗️ إعادة بناء الموتور (The Engine)
         run: |
+          # مسح شامل لأي كركبة قديمة
+          rm -rf android build .dart_tool pubspec.lock
+          
+          # إنشاء الهيكل من الصفر بمنتهى النظام
           flutter create . --platforms android --project-name mairror_ultimate
+          
+          # تثبيت المكتبات (المقادير)
           flutter pub get
 
-      - name: 🔍 فحص القانون
-        run: flutter analyze || exit 0 # هنخليه يكمل حتى لو فيه تحذيرات بسيطة عشان نطلع الـ APK
+      - name: 🏗️ طبخ الـ APK (The Baking)
+        run: |
+          # بناء نسخة ديبرج سريعة وخفيفة للتجربة
+          flutter build apk --debug
 
-      - name: 🏗️ بناء الـ APK
-        run: flutter build apk --debug
-
-      - uses: actions/upload-artifact@v4
-        with: { name: mairror-apk, path: build/app/outputs/flutter-apk/app-debug.apk }
+      - name: 📦 تسليم الأمانة (Upload)
+        uses: actions/upload-artifact@v4
+        with:
+          name: mairror-ultimate-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
