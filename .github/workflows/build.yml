@@ -7,19 +7,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: 📦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          # رفعنا النسخة لأحدث إصدار مستقر يرضي flutter_tts
+          flutter-version: '3.22.0' 
           channel: stable
+          
       - name: 🔧 Get dependencies
         run: |
-          # لاحظ هنا غيرنا الاسم لـ mairror_ultimate عشان نرضي Dart
+          # مسح أي عك قديم وبناء المشروع بالاسم الصحيح
+          rm -rf android .dart_tool
           flutter create --project-name mairror_ultimate --platforms android .
-          flutter clean
           flutter pub get
+          
       - name: 📱 Build APK
-        run: flutter build apk --release --split-per-abi --no-tree-shake-icons
+        run: |
+          # البناء مع تجاهل أي تعارض في الأيقونات لسرعة الإنجاز
+          flutter build apk --release --split-per-abi --no-tree-shake-icons
+          
       - name: 📤 Upload APKs
         uses: actions/upload-artifact@v4
         with:
