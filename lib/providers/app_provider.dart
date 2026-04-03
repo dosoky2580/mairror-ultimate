@@ -25,11 +25,17 @@ class AppProvider with ChangeNotifier {
   String get selectedVoice => _selectedVoice;
   List<String> get voiceNames => _voices.keys.toList();
   
-  // السطر اللي كان عامل المشكلة:
   ThemeMode get themeMode => _isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
-  void toggleTheme() { _isDarkMode = !_isDarkMode; notifyListeners(); }
-  void setVoice(String name) { _selectedVoice = name; notifyListeners(); }
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
+  }
+
+  void setVoice(String name) {
+    _selectedVoice = name;
+    notifyListeners();
+  }
 
   Future<void> translate(String text) async {
     if (text.isEmpty) return;
@@ -39,7 +45,9 @@ class AppProvider with ChangeNotifier {
       var translation = await _translator.translate(text, to: _targetLanguage);
       _resultText = translation.text;
       await speak();
-    } catch (e) { _resultText = "تأكد من الاتصال بالإنترنت"; }
+    } catch (e) {
+      _resultText = "تأكد من الاتصال بالإنترنت يا شريكي";
+    }
     _isWorking = false;
     notifyListeners();
   }
