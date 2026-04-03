@@ -1,37 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 
-class AppProvider with ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.dark;
-  ThemeMode get themeMode => _themeMode;
+class AppProvider extends ChangeNotifier {
+  bool _isDarkMode = true;
+  String _translatedText = "أدهم جاهز يا تامر";
 
-  String _translatedText = "الترجمة ستظهر هنا...";
+  bool get isDarkMode => _isDarkMode;
   String get translatedText => _translatedText;
+  ThemeMode get themeMode => _isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
-  bool _isTranslating = false;
-  bool get isTranslating => _isTranslating;
-
-  final onDeviceTranslator = OnDeviceTranslator(
-    sourceLanguage: TranslateLanguage.turkish,
-    targetLanguage: TranslateLanguage.arabic,
-  );
-
-  void toggleTheme() {
-    _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+  void toggleDarkMode() {
+    _isDarkMode = !_isDarkMode;
     notifyListeners();
   }
 
-  Future<void> translate(String text) async {
-    if (text.isEmpty) return;
-    _isTranslating = true;
+  void updateText(String text) {
+    _translatedText = text;
     notifyListeners();
-    try {
-      _translatedText = await onDeviceTranslator.translateText(text);
-    } catch (e) {
-      _translatedText = "خطأ: تأكد من تحميل حزمة اللغة";
-    } finally {
-      _isTranslating = false;
-      notifyListeners();
-    }
   }
 }
