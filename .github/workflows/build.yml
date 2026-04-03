@@ -7,26 +7,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - name: 📦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          # نستخدم أحدث إصدار مستقر متاح في 2026
           channel: 'stable'
-          
-      - name: 🔧 Get dependencies
+      - name: 🔧 Prepare Project
         run: |
-          # مسح شامل لبقايا المحاولات القديمة
-          rm -rf android .dart_tool pubspec.lock
-          # إعادة إنشاء مشروع أندرويد بالاسم المعتمد
+          rm -rf android .dart_tool
           flutter create --project-name mairror_ultimate --platforms android .
-          # تحديث المكتبات لأحدث توافق
-          flutter pub upgrade
           
+          # إجبار ملف Gradle على تعطيل الضغط (السر هنا)
+          sed -i 's/minifyEnabled true/minifyEnabled false/g' android/app/build.gradle
+          sed -i 's/shrinkResources true/shrinkResources false/g' android/app/build.gradle
+          
+          # زرع قواعد Proguard شاملة لكل اللغات
+          cat << 'POG' > android/app/proguard-rules.pro
+          -keep class com.google.mlkit.** { *; }
+          -dontwarn com.google.mlkit.**
+          -keep class com.google.android.gms.** { *; }
+          -dontwarn com.google.android.gms.**
+          -keep class com.google.mlkit.vision.text.** { *; }
+          -keep class com.google.mlkit.vision.common.** { *; }
+          POG
+          
+          flutter pub get
       - name: 📱 Build APK
         run: |
-          flutter build apk --release --split-per-abi --no-tree-shake-icons
-          
+          # البناء مع تعطيل الـ R8 تماماً من أمر التنفيذ
+          flutter build apk --release --no-shrink --no-tree-shake-icons
       - name: 📤 Upload APKs
         uses: actions/upload-artifact@v4
         with:
