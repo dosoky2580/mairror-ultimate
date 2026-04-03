@@ -6,11 +6,10 @@ environment:
 dependencies:
   flutter: {sdk: flutter}
   cupertino_icons: ^1.0.6
-  flutter_tts: ^3.8.5
-  speech_to_text: ^6.6.1
-  camera: ^0.11.0
   provider: ^6.1.1
   shared_preferences: ^2.2.2
+  flutter_tts: ^3.8.5
+  camera: ^0.11.0
   dio: ^5.4.0
   share_plus: ^7.2.2
 flutter:
