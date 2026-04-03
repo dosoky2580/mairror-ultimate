@@ -19,8 +19,11 @@ jobs:
       - name: Build Process
         run: |
           flutter create . --platforms android
+          # تعديل ملف gradle لتعطيل الـ minify برمجياً
+          sed -i 's/minifyEnabled true/minifyEnabled false/g' android/app/build.gradle
+          sed -i 's/shrinkResources true/shrinkResources false/g' android/app/build.gradle
           flutter pub get
-          flutter build apk --release --no-shrink
+          flutter build apk --release --no-tree-shake-icons
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
