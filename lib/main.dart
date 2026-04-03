@@ -23,11 +23,11 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       theme: ThemeData.light(),
       home: Scaffold(
-        app_view: Center(
+        body: Center( // هنا التصحيح يا تامر: body وليس app_view
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(provider.translatedText),
+              Text(provider.translatedText, style: const TextStyle(fontSize: 20)),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => provider.toggleTheme(),
