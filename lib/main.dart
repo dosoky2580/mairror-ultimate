@@ -20,12 +20,19 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       theme: ThemeData.light(),
       home: Scaffold(
-        appBar: AppBar(title: const Text("Mirror - ركن الترجمة")),
+        appBar: AppBar(
+          title: const Text("Mirror - ركن الترجمة"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () => _showAbout(context), // زرار النبذة
+            )
+          ],
+        ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // اختيار الصوت
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -40,12 +47,13 @@ class MyApp extends StatelessWidget {
               const Divider(),
               TextField(
                 controller: _controller,
-                decoration: const InputDecoration(hintText: "اكتب هنا..."),
+                decoration: const InputDecoration(hintText: "اكتب هنا لترجمة مشاعرك..."),
                 maxLines: 3,
               ),
               const SizedBox(height: 20),
               if (provider.isWorking) const LinearProgressIndicator(),
               Container(
+                width: double.infinity,
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(color: Colors.blueGrey.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
                 child: Text(provider.resultText, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -61,6 +69,46 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showAbout(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        expand: false,
+        builder: (context, scrollController) => SingleChildScrollView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(25),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Center(child: Text("🛡️ عالم ميرور (Mirror World)", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))),
+              const SizedBox(height: 20),
+              _buildSection("💎 الرؤية والجوهر", "في عالم ميرور، نحن لا نصنع مجرد كود، نحن نصيغ فلسفة صمود وانعكاس للذات. الصعود للقمة ليس صدفة، بل قدر المستعدين."),
+              _buildSection("⌛ حقيقة الوقت", "الوقت هو الإنجاز. عمر الإنسان الحقيقي يُقاس بكل ثانية يضع فيها لبنة في بناء حلمه. اللحظة التي لا تحقق فيها خطوة هي لحظة لم تُعش بعد."),
+              _buildSection("🦾 النهوض من الانكسار", "الانكسار لا يعني النهاية. هو لحظة إعادة صهر معدنك لتصنع بداية أكثر عمقاً وأصلب عوداً. البداية الثانية هي الأقوى دائماً."),
+              _buildSection("🎙️ الروح والهوية", "هذا النظام ينبض بأصوات سيف، سلمى، سما، وسارة. ميثاق لا ينكسر يربط التكنولوجيا بمشاعرنا الصادقة."),
+              const Divider(),
+              const Center(child: Text("بواسطة المطور: تامر (Tamer)", style: TextStyle(fontStyle: FontStyle.italic))),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSection(String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+        const SizedBox(height: 5),
+        Text(content, style: const TextStyle(fontSize: 16)),
+      ]),
     );
   }
 }
