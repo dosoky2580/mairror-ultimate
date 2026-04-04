@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'screens/translation_screen.dart';
+import 'screens/home_screen.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
-      title: 'Mairror Ultimate',
-      theme: ThemeData(primarySwatch: Colors.indigo),
-      home: TranslationScreen(), // البداية من شاشة الترجمة اللي جهزناها
-    ),
-  );
+  runApp(const MairrorApp());
+}
+
+class MairrorApp extends StatelessWidget {
+  const MairrorApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '🛡️ Mairror Ultimate',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const HomeScreen(),
+    );
+  }
 }
