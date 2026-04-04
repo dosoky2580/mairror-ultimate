@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "Mirror Ultimate: Activating 4 Free Voices & Dual-Text Translation UI"
+git commit -m "Fix: Removed invalid const constructor in home_screen and verified voice_service"
 git push origin main

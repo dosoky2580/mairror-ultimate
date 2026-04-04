@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 15,
                   children: [
-                    _buildCard(context, 'الترجمة الفورية', Icons.translate, Colors.blue, const TranslationScreen()),
+                    _buildCard(context, 'الترجمة الفورية', Icons.translate, Colors.blue, TranslationScreen()),
                     _buildCard(context, 'عدسة ميرور (AI)', Icons.camera_alt, Colors.amber, const VisionScreen()),
                     _buildCard(context, 'الكتب والمستندات', Icons.menu_book, Colors.green, const LibraryScreen()),
                     _buildCard(context, 'ساحة الألعاب', Icons.sports_esports, Colors.red, const GamesScreen()),
