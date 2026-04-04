@@ -1,5 +1,5 @@
 name: mairror_ultimate
-description: Mirror Ultimate AI Project - Structural Fix
+description: Mirror Ultimate AI Project - Structural Build
 version: 1.0.0+1
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -17,9 +17,10 @@ dependencies:
   url_launcher: ^6.2.0
   camera: ^0.10.5
   google_ml_kit: ^0.16.0
+  flame: ^1.8.0
+  chess: ^0.8.1
   flutter_secure_storage: ^9.0.0
   encrypt: ^5.0.1
-  chess: ^0.8.1
 
 flutter:
   uses-material-design: true
