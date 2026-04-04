@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "Mirror Ultimate: Crucial Functionality Fix - Voice, PDF, Chess Engine, and Dual-Text Translation UI"
+git commit -m "Mirror Ultimate: Activating 4 Free Voices & Dual-Text Translation UI"
 git push origin main
