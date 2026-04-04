@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen())),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsScreen())),
           )
         ],
         centerTitle: true,
@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                     _buildCard(context, 'الترجمة الفورية', Icons.translate, Colors.blue, TranslationScreen()),
                     _buildCard(context, 'عدسة ميرور (AI)', Icons.camera_alt, Colors.amber, const VisionScreen()),
                     _buildCard(context, 'الكتب والمستندات', Icons.menu_book, Colors.green, const LibraryScreen()),
-                    _buildCard(context, 'ساحة الألعاب', Icons.sports_esports, Colors.red, const GamesScreen()),
+                    _buildCard(context, 'ساحة الألعاب', Icons.sports_esports, Colors.red, GamesScreen()),
                     _buildCard(context, 'قصص وإلهام', Icons.auto_stories, Colors.purple, const StoriesScreen()),
                     _buildCard(context, 'مساعد أدهم', Icons.smart_toy, Colors.teal, null),
                   ],
