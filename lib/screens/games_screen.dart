@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chess/chess.dart' as chess;
+import 'package:flutter_chess_board/flutter_chess_board.dart';
 
 class GamesScreen extends StatelessWidget {
   const GamesScreen({super.key});
@@ -11,18 +11,22 @@ class GamesScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('ساحة الألعاب الذكية')),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.grid_on, size: 80, color: Colors.white),
             const SizedBox(height: 20),
             const Text('شطرنج ميرور (Logic 0.8.1)', 
-                style: TextStyle(color: Colors.amber, fontSize: 18)),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {}, 
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-              child: const Text('ابدأ تحدي الذكاء الاصطناعي'),
+                style: TextStyle(color: Colors.amber, fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            // رقعة الشطرنج الرسمية والمستقرة
+            ChessBoard(
+              onMove: () {},
+              onCheckMate: (color) {},
+              onDraw: () {},
+              size: MediaQuery.of(context).size.width * 0.9,
+              enableUserMoves: true,
             ),
+            const SizedBox(height: 30),
+            const Text('تحدى الذكاء الاصطناعي بصوت أدهم', 
+                style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
       ),

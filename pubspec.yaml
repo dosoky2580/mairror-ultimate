@@ -10,17 +10,22 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
-  # الألعاب (نسخ مستقرة)
+  
+  # المحرك الذهبي (الشطرنج)
   chess: ^0.8.1
-  flutter_stateless_chess_board: ^1.1.0
-  # الأمان والتشفير 256-bit
+  flutter_chess_board: ^1.1.0
+  
+  # الأمان والخصوصية (بصمة + تشفير 256)
   local_auth: ^2.1.6
   encrypt: ^5.0.3
-  # الصوت والوسائط (للبصمة)
+  
+  # الصوت والوسائط (للبصمة والترجمة)
   flutter_tts: ^3.8.3
   share_plus: ^7.1.0
   camera: ^0.10.5+5
-  # المستندات والـ A4 والأوفلاين
+  google_ml_kit: ^0.16.0
+  
+  # المستندات A4 والأوفلاين
   syncfusion_flutter_pdfviewer: ^21.1.35
   hive: ^2.2.3
   hive_flutter: ^1.1.0
