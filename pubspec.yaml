@@ -1,5 +1,5 @@
 name: mairror_ultimate
-description: Mirror Ultimate AI Project - Final Override
+description: Mirror Ultimate - Final Masterpiece
 version: 1.0.0+1
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -8,23 +8,20 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.1.1
-  speech_to_text: ^6.1.1
-  flutter_tts: ^3.8.3
-  http: ^1.1.0
-  share_plus: ^7.1.0
-  file_picker: ^6.0.0
-  path_provider: ^2.1.0
-  url_launcher: ^6.2.0
-  camera: ^0.10.5
-  google_ml_kit: ^0.16.0
-  flame: ^1.8.0
-  chess: ^0.8.1
+  camera: ^0.10.5+9
+  google_ml_kit: ^0.17.0
+  speech_to_text: ^6.6.2
+  flutter_tts: ^3.8.5
+  share_plus: ^7.2.2
+  file_picker: ^6.1.2
+  path_provider: ^2.1.2
+  url_launcher: ^6.2.5
   flutter_secure_storage: ^9.0.0
-  encrypt: ^5.0.1
+  encrypt: ^5.0.3
+  chess: ^0.8.1
 
-# هنا السر اللي هيحل المشكلة من غير ما نمسح كودك
 dependency_overrides:
-  google_mlkit_smart_reply: ^0.10.0
+  plugin_platform_interface: ^2.1.7
 
 flutter:
   uses-material-design: true
