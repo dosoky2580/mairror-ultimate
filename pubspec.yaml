@@ -1,31 +1,34 @@
 name: mairror_ultimate
-description: Mirror Ultimate - Legacy Build (V2 Verified)
+description: The Final Masterpiece by Tamer
 version: 1.0.0+1
+publish_to: 'none'
+
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  # الألعاب والمنطق
+  chess: ^0.8.1
+  flutter_chess_board: ^2.0.0
+  # الأمان والتشفير
   local_auth: ^2.1.6
   encrypt: ^5.0.3
   pointycastle: ^3.7.3
-  chess: ^0.8.1
-  flutter_chess_board: ^2.0.0
-  flutter:
+  # الصوت والوسائط
+  flutter_tts: ^3.8.3
+  speech_to_text: ^6.1.1
+  share_plus: ^7.1.0
+  camera: ^0.10.5+5
+  google_ml_kit: ^0.16.0
+  url_launcher: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
     sdk: flutter
-  http: ^1.1.0
-  provider: ^6.1.1
-  camera: ^0.10.5+9
-  google_ml_kit: ^0.17.0
-  speech_to_text: ^7.3.0
-  flutter_tts: ^3.8.5
-  share_plus: ^7.2.2
-  # التحديث الجذري هنا لإنهاء مشكلة الـ V1 Embedding
-  file_picker: ^8.0.1
-  path_provider: ^2.1.2
-  url_launcher: ^6.2.5
-  flutter_secure_storage: ^10.0.0
-  encrypt: ^5.0.3
-  chess: ^0.8.1
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true

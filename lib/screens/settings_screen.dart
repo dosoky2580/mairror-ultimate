@@ -13,20 +13,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _isProtecting = false;
 
   Future<void> _authenticate() async {
-    bool authenticated = false;
-    try {
-      authenticated = await auth.authenticate(
-        localizedReason: 'يرجى تأكيد بصمة الإصبع أو الوجه لحماية ميرور',
+    bool canCheckBiometrics = await auth.canCheckBiometrics;
+    if (canCheckBiometrics) {
+      bool authenticated = await auth.authenticate(
+        localizedReason: '🛡️ ميرور يطلب بصمتك لتفعيل التشفير العسكري AES-256',
         options: const AuthenticationOptions(stickyAuth: true),
       );
-    } catch (e) {
-      print(e);
-    }
-    if (authenticated) {
-      setState(() => _isProtecting = !_isProtecting);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم تفعيل حماية ميرور العسكرية 🛡️')),
-      );
+      if (authenticated) {
+        setState(() => _isProtecting = !_isProtecting);
+      }
     }
   }
 
@@ -38,28 +33,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _buildSectionTitle('الأمان والتشفير (AES-256)'),
+          Text('الأمان والتشفير', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
           SwitchListTile(
-            tileColor: const Color(0xFF1D1E33),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             title: const Text('قفل التطبيق بالبصمة', style: TextStyle(color: Colors.white)),
-            subtitle: const Text('تشفير البيانات بمفتاح 256 بت', style: TextStyle(color: Colors.grey)),
             value: _isProtecting,
             activeColor: Colors.amber,
             onChanged: (bool value) => _authenticate(),
           ),
-          const SizedBox(height: 20),
-          _buildSectionTitle('إعدادات الصوت (الخماسي)'),
-          // ... (باقي إعدادات الأصوات اللي عملناها)
+          const Divider(color: Colors.grey),
+          const ListTile(
+            title: Text('إصدار التشفير', style: TextStyle(color: Colors.white)),
+            subtitle: Text('AES-256 bit Military Grade', style: TextStyle(color: Colors.green)),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-      child: Text(title, style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
     );
   }
 }
