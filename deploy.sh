@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "Mirror Ultimate: Fixing Android Namespace and Gradle Sync - Final Build Attempt"
+git commit -m "Mirror Ultimate: Android Gradle Provider (AGP) 8.1 Upgrade - Final Namespace Fix"
 git push origin main
