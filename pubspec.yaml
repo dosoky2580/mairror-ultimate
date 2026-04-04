@@ -1,11 +1,11 @@
 name: mairror_ultimate
-description: نسخة الحوار والترجمة الشاملة - ميرور
+description: نسخة ميرور - حل تعارض مكتبة الترجمة والإنترنت
 version: 1.0.0+1
 environment: { sdk: '>=3.2.0 <4.0.0' }
 dependencies:
   flutter: { sdk: flutter }
   provider: ^6.1.1
-  translator: ^0.1.7
+  translator: ^1.0.4+1
   flutter_tts: ^4.2.2
   share_plus: ^10.1.4
   speech_to_text: ^7.0.0
