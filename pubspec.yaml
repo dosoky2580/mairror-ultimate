@@ -1,24 +1,33 @@
 name: mairror_ultimate
 description: The Final Masterpiece by Tamer
-version: 1.0.0+1
+version: 2.1.0+88
+publish_to: 'none'
+
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.1.0 <4.0.0'
+
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
-  # الشطرنج والمنطق
-  chess: ^0.8.1
-  # الأمان (نسخ مستقرة جداً لا تطلب Namespace)
+  camera: ^0.10.5+9
+  google_ml_kit: ^0.17.0
+  speech_to_text: ^6.6.2
+  flutter_tts: ^3.8.5
+  share_plus: ^7.2.2
+  file_picker: ^6.1.2
+  path_provider: ^2.1.2
+  url_launcher: ^6.2.2
+  flame: ^1.10.1
+  chess: ^0.11.0
+  http: ^1.1.2
   local_auth: 2.1.6
   encrypt: 5.0.3
-  # الصوت والوسائط
-  flutter_tts: 3.8.3
-  share_plus: 7.1.0
-  syncfusion_flutter_pdfviewer: 21.1.35
-  hive: 2.2.3
-  hive_flutter: 1.1.0
-  url_launcher: 6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
 flutter:
   uses-material-design: true
   assets:
