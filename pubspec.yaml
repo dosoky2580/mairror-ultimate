@@ -5,6 +5,9 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
+  local_auth: ^2.1.6
+  encrypt: ^5.0.3
+  pointycastle: ^3.7.3
   chess: ^0.8.1
   flutter_chess_board: ^2.0.0
   flutter:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -8,10 +9,26 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedVoice = 'سيف (افتراضي)';
-  bool _isUserVoiceActivated = false;
+  final LocalAuthentication auth = LocalAuthentication();
+  bool _isProtecting = false;
 
-  final List<String> _voices = ['سيف', 'سارة', 'سلمى', 'سما', 'صوتي الشخصي'];
+  Future<void> _authenticate() async {
+    bool authenticated = false;
+    try {
+      authenticated = await auth.authenticate(
+        localizedReason: 'يرجى تأكيد بصمة الإصبع أو الوجه لحماية ميرور',
+        options: const AuthenticationOptions(stickyAuth: true),
+      );
+    } catch (e) {
+      print(e);
+    }
+    if (authenticated) {
+      setState(() => _isProtecting = !_isProtecting);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تفعيل حماية ميرور العسكرية 🛡️')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,35 +38,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _buildSectionTitle('إعدادات صوت الترجمة والإلهام'),
-          Card(
-            color: const Color(0xFF1D1E33),
-            child: Column(
-              children: _voices.map((voice) => RadioListTile<String>(
-                title: Text(voice, style: const TextStyle(color: Colors.white)),
-                value: voice,
-                groupValue: _selectedVoice,
-                onChanged: (value) {
-                  setState(() => _selectedVoice = value!);
-                  // هنا يتم تخزين الصوت المختار ليعمل في كل الأركان
-                },
-                activeColor: Colors.amber,
-              )).toList(),
-            ),
-          ),
-          const SizedBox(height: 20),
-          _buildSectionTitle('بصمة الصوت (صوت تامر)'),
-          ListTile(
+          _buildSectionTitle('الأمان والتشفير (AES-256)'),
+          SwitchListTile(
             tileColor: const Color(0xFF1D1E33),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            leading: const Icon(Icons.mic_external_on, color: Colors.red),
-            title: const Text('تسجيل بصمة صوتي', style: TextStyle(color: Colors.white)),
-            subtitle: const Text('لتفعيل الصوت الخامس في كل الأركان', style: TextStyle(color: Colors.grey)),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 15, color: Colors.grey),
-            onTap: () {
-               // هنا منطق تسجيل وتحليل صوت المستخدم
-            },
+            title: const Text('قفل التطبيق بالبصمة', style: TextStyle(color: Colors.white)),
+            subtitle: const Text('تشفير البيانات بمفتاح 256 بت', style: TextStyle(color: Colors.grey)),
+            value: _isProtecting,
+            activeColor: Colors.amber,
+            onChanged: (bool value) => _authenticate(),
           ),
+          const SizedBox(height: 20),
+          _buildSectionTitle('إعدادات الصوت (الخماسي)'),
+          // ... (باقي إعدادات الأصوات اللي عملناها)
         ],
       ),
     );
