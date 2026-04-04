@@ -1,5 +1,5 @@
 name: mairror_ultimate
-description: Mirror Ultimate AI Project - Final Fix
+description: Mirror Ultimate AI Project - Structural Fix
 version: 1.0.0+1
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -7,27 +7,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
-  # الترجمة والصوت
+  provider: ^6.1.1
   speech_to_text: ^6.1.1
   flutter_tts: ^3.8.3
   http: ^1.1.0
   share_plus: ^7.1.0
-  
-  # الملفات والروابط
   file_picker: ^6.0.0
   path_provider: ^2.1.0
   url_launcher: ^6.2.0
-  
-  # الكاميرا والذكاء الاصطناعي
   camera: ^0.10.5
   google_ml_kit: ^0.16.0
-  
-  # الأمان
   flutter_secure_storage: ^9.0.0
   encrypt: ^5.0.1
-
-  # الشطرنج (الإصدار المطلوب بالاسم من جيت هب)
   chess: ^0.8.1
 
 flutter:
