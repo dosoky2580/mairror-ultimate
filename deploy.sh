@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "Mirror Ultimate: Voice Control Hub - 5 Voices Logic & Settings Integration"
+git commit -m "Mirror Ultimate: Finalizing 5 Pillars - Fixing Navigation & Building Stories/Games Hub"
 git push origin main
