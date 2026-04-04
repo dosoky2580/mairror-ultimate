@@ -11,24 +11,20 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.6
   
-  # منطق الشطرنج (المحرك الخام المستقر)
+  # المحرك الخام
   chess: ^0.8.1
   
-  # الأمان والخصوصية (بصمة + تشفير 256)
-  local_auth: ^2.1.6
-  encrypt: ^5.0.3
+  # الأمان (تم اختيار نسخ مستقرة جداً)
+  local_auth: 2.1.6
+  encrypt: 5.0.3
   
-  # الصوت والوسائط (للبصمة والترجمة)
-  flutter_tts: ^3.8.3
-  share_plus: ^7.1.0
-  camera: ^0.10.5+5
-  google_ml_kit: ^0.16.0
-  
-  # المستندات A4 والأوفلاين
-  syncfusion_flutter_pdfviewer: ^21.1.35
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
-  url_launcher: ^6.2.1
+  # الوسائط والمستندات
+  flutter_tts: 3.8.3
+  share_plus: 7.1.0
+  syncfusion_flutter_pdfviewer: 21.1.35
+  hive: 2.2.3
+  hive_flutter: 1.1.0
+  url_launcher: 6.2.1
 
 dev_dependencies:
   flutter_test:
