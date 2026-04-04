@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "Fix: Upgrade speech_to_text to 6.7.0 to resolve v1 embedding errors"
+git commit -m "Fix: Final Dependency Alignment - SpeechToText to 7.3.0 as requested"
 git push origin main
