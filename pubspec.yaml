@@ -7,31 +7,26 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  syncfusion_flutter_pdfviewer: ^21.1.35
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
-  # الألعاب والمنطق
+  # الألعاب (نسخ مستقرة)
   chess: ^0.8.1
-  flutter_chess_board: ^2.0.0
-  # الأمان والتشفير
+  flutter_stateless_chess_board: ^1.1.0
+  # الأمان والتشفير 256-bit
   local_auth: ^2.1.6
   encrypt: ^5.0.3
-  pointycastle: ^3.7.3
-  # الصوت والوسائط
+  # الصوت والوسائط (للبصمة)
   flutter_tts: ^3.8.3
-  speech_to_text: ^6.1.1
   share_plus: ^7.1.0
   camera: ^0.10.5+5
-  google_ml_kit: ^0.16.0
-  url_launcher: ^6.2.1
-
-dev_dependencies:
+  # المستندات والـ A4 والأوفلاين
   syncfusion_flutter_pdfviewer: ^21.1.35
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  url_launcher: ^6.2.1
+
+dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
