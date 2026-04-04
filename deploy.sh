@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "Fix: Final Dependency Alignment - SpeechToText to 7.3.0 as requested"
+git commit -m "Mirror Ultimate: Crucial Functionality Fix - Voice, PDF, Chess Engine, and Dual-Text Translation UI"
 git push origin main
