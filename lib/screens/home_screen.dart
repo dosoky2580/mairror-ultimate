@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.grey),
-            onPressed: () => _openPage(context, 'الإعدادات والتحكم'),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen())),
           )
         ],
         centerTitle: true,
