@@ -1,5 +1,5 @@
 name: mairror_ultimate
-description: Mirror Ultimate AI Project by Tamer & Adham
+description: Mirror Ultimate AI Project - Stable Build
 version: 1.0.0+1
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -8,26 +8,25 @@ dependencies:
   flutter:
     sdk: flutter
   
-  # الترجمة والصوت
-  speech_to_text: ^6.6.1
+  # مكتبات الصوت والترجمة (الأكثر استقراراً)
+  speech_to_text: ^6.1.1
   flutter_tts: ^3.8.3
   http: ^1.1.0
-  share_plus: ^7.2.1
+  share_plus: ^7.1.0
   
-  # الملفات والروابط
-  file_picker: ^6.1.1
-  path_provider: ^2.1.1
-  url_launcher: ^6.2.1
-  
-  # الكاميرا والذكاء الاصطناعي
-  camera: ^0.10.5+5
+  # الملفات والكاميرا
+  file_picker: ^6.0.0
+  path_provider: ^2.1.0
+  url_launcher: ^6.2.0
+  camera: ^0.10.5
   google_ml_kit: ^0.16.0
   
-  # الألعاب والحماية
-  flame: ^1.8.0
-  chess: ^0.11.0
+  # الأمان (متوافقة تماماً)
   flutter_secure_storage: ^9.0.0
-  encrypt: ^5.0.3
+  encrypt: ^5.0.1
+
+  # الشطرنج (الإصدار اللي اتفقنا عليه يا تامر)
+  chess: ^0.9.0
 
 flutter:
   uses-material-design: true
