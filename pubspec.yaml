@@ -11,9 +11,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.6
   
-  # المحرك الذهبي (الشطرنج)
+  # منطق الشطرنج (المحرك الخام المستقر)
   chess: ^0.8.1
-  flutter_chess_board: ^1.1.0
   
   # الأمان والخصوصية (بصمة + تشفير 256)
   local_auth: ^2.1.6
