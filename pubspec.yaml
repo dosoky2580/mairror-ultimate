@@ -1,5 +1,5 @@
 name: mairror_ultimate
-description: Mirror Ultimate AI Project - Final Stable Build
+description: Mirror Ultimate - Final Stable Build
 version: 1.0.0+1
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -7,7 +7,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # المكتبات الأساسية بنسخ 2026 المستقرة
   http: ^1.1.0
   provider: ^6.1.1
   camera: ^0.10.5+9
