@@ -7,6 +7,9 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  syncfusion_flutter_pdfviewer: ^21.1.35
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
@@ -26,6 +29,9 @@ dependencies:
   url_launcher: ^6.2.1
 
 dev_dependencies:
+  syncfusion_flutter_pdfviewer: ^21.1.35
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
