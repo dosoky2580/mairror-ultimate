@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "Fix: Final Version Solving - Chess Downgrade to 0.8.1 & Stable Build"
+git commit -m "Fix: Upgrade file_picker to v8 & Initialize missing asset directories"
 git push origin main

@@ -9,15 +9,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # الشطرنج المستقر (النسخة المطلوبة)
+  cupertino_icons: ^1.0.6
   chess: ^0.8.1
-  # الأركان الأساسية
+  # تحديث النسخة لحل مشكلة الـ v1 embedding
+  file_picker: ^8.1.2
   camera: ^0.10.5+9
   google_ml_kit: ^0.17.0
   speech_to_text: ^6.6.2
   flutter_tts: ^3.8.5
   share_plus: ^7.2.2
-  file_picker: ^6.1.2
   path_provider: ^2.1.2
   url_launcher: ^6.2.2
   flame: ^1.10.1
@@ -34,4 +34,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/stories_data.json
-    - assets/images/backgrounds/
+    # حذفنا السطر اللي كان بيسبب Error المجلد المفقود لضمان الـ Build
