@@ -11,11 +11,11 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.6
   chess: ^0.8.1
-  # تحديث النسخة لحل مشكلة الـ v1 embedding
+  # التحديث الحاسم لحل مشكلة Unresolved reference Registrar
+  speech_to_text: ^6.7.0
   file_picker: ^8.1.2
   camera: ^0.10.5+9
   google_ml_kit: ^0.17.0
-  speech_to_text: ^6.6.2
   flutter_tts: ^3.8.5
   share_plus: ^7.2.2
   path_provider: ^2.1.2
@@ -34,4 +34,3 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/stories_data.json
-    # حذفنا السطر اللي كان بيسبب Error المجلد المفقود لضمان الـ Build
