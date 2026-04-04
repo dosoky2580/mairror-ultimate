@@ -1,20 +1,26 @@
 name: mairror_ultimate
-description: Mirror Ultimate - Security & AI Edition (Fixed Chess Version)
-version: 1.0.0+45
+description: Mirror Ultimate - Security & AI Edition (Final Dependencies Fix)
+version: 1.0.0+46
 environment: { sdk: '>=3.2.0 <4.0.0' }
 
 dependencies:
   flutter: { sdk: flutter }
   provider: ^6.1.1
+  # الترجمة والنطق
   translator: ^1.0.4+1
   http: ^1.1.0
+  flutter_tts: ^3.8.3
+  # الحماية والتخزين
   flutter_secure_storage: ^9.0.0
   encrypt: ^5.0.3
   firebase_remote_config: ^4.3.8
+  # الكاميرا والذكاء الاصطناعي
   camera: ^0.10.5+5
   google_ml_kit: ^0.16.0
+  # الألعاب والرسوم
   flame: ^1.8.0
   chess: ^0.8.1
+  # أدوات النظام
   path_provider: ^2.1.1
   share_plus: ^7.2.1
   url_launcher: ^6.2.1
