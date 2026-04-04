@@ -12,7 +12,7 @@ class AppProvider with ChangeNotifier {
   String _resultText = "";
   String _selectedVoice = "سيف";
   String _targetLang = "en";
-  List<String> _history = []; // سجل الذاكرة
+  List<String> _history = [];
 
   final Map<String, String> languages = {"إنجليزي": "en", "تركي": "tr", "فرنسي": "fr", "ألماني": "de", "عربي": "ar"};
   final Map<String, Map<String, double>> _voices = {
@@ -34,7 +34,8 @@ class AppProvider with ChangeNotifier {
   void setVoice(String name) { _selectedVoice = name; notifyListeners(); }
   void setTargetLang(String code) { _targetLang = code; notifyListeners(); }
 
-  Future<void> translateFree(String text, {String from = 'ar', String to = 'en'}) async {
+  // رجعنا الاسم 'translate' عشان يتطابق مع الملفات التانية
+  Future<void> translate(String text, {String from = 'ar', String to = 'en'}) async {
     if (text.trim().isEmpty) {
       HapticFeedback.vibrate();
       return;
@@ -45,7 +46,6 @@ class AppProvider with ChangeNotifier {
       var translation = await _translator.translate(text, from: from, to: to);
       _resultText = translation.text;
       
-      // إضافة للسجل لو مش موجودة
       if (!_history.contains(text)) {
         _history.insert(0, text);
         if (_history.length > 5) _history.removeLast();
