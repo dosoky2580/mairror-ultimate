@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 
 class GamesScreen extends StatelessWidget {
-  const GamesScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E21),
-      appBar: AppBar(title: const Text('ساحة الألعاب الذكية')),
-      body: Center(
+      appBar: AppBar(title: Text('ركن الألعاب')),
+      body: GridView.count(
+        crossAxisCount: 2,
+        padding: EdgeInsets.all(16),
+        children: [
+          _gameCard(context, 'الشطرنج 3D', Icons.grid_on, Colors.brown, () {}),
+          _gameCard(context, 'مكعب روبيك', Icons.view_in_ar, Colors.orange, () {}),
+        ],
+      ),
+    );
+  }
+
+  Widget _gameCard(context, title, icon, color, action) {
+    return Card(
+      elevation: 5,
+      child: InkWell(
+        onTap: action,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.grid_on, size: 100, color: Colors.amber),
-            const SizedBox(height: 20),
-            const Text('شطرنج ميرور - محرك 0.8.1', 
-                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            const Text('جاري تهيئة الرقعة الذكية...', style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 40),
-            CircularProgressIndicator(color: Colors.amber),
+            Icon(icon, size: 60, color: color),
+            SizedBox(height: 10),
+            Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
       ),
