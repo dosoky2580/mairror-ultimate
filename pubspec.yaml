@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # الشطرنج المستقر (النسخة المطلوبة)
+  chess: ^0.8.1
+  # الأركان الأساسية
   camera: ^0.10.5+9
   google_ml_kit: ^0.17.0
   speech_to_text: ^6.6.2
@@ -18,7 +21,6 @@ dependencies:
   path_provider: ^2.1.2
   url_launcher: ^6.2.2
   flame: ^1.10.1
-  chess: ^0.11.0
   http: ^1.1.2
   local_auth: 2.1.6
   encrypt: 5.0.3
