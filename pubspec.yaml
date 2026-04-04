@@ -7,15 +7,18 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
+  # الشطرنج والمنطق
   chess: ^0.8.1
-  local_auth: 1.1.11
-  encrypt: 5.0.1
-  flutter_tts: 3.6.3
-  share_plus: 6.3.1
-  syncfusion_flutter_pdfviewer: 20.4.54
+  # الأمان (نسخ مستقرة جداً لا تطلب Namespace)
+  local_auth: 2.1.6
+  encrypt: 5.0.3
+  # الصوت والوسائط
+  flutter_tts: 3.8.3
+  share_plus: 7.1.0
+  syncfusion_flutter_pdfviewer: 21.1.35
   hive: 2.2.3
   hive_flutter: 1.1.0
-  url_launcher: 6.1.11
+  url_launcher: 6.2.1
 flutter:
   uses-material-design: true
   assets:
