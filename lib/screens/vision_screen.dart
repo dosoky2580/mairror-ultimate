@@ -1,101 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:camera/camera.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
 
 class VisionScreen extends StatefulWidget {
-  const VisionScreen({super.key});
-
   @override
-  State<VisionScreen> createState() => _VisionScreenState();
+  _VisionScreenState createState() => _VisionScreenState();
 }
 
 class _VisionScreenState extends State<VisionScreen> {
-  CameraController? _controller;
-  String _recognizedText = "وجه العدسة نحو النص للترجمة والتنقيح...";
+  final TextRecognizer _textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
   bool _isProcessing = false;
+  String _extractedText = "قم بتوجيه الكاميرا نحو النص";
 
-  @override
-  void initState() {
-    super.initState();
-    _setupCamera();
-  }
-
-  void _setupCamera() async {
-    final cameras = await availableCameras();
-    _controller = CameraController(cameras[0], ResolutionPreset.high);
-    await _controller!.initialize();
-    setState(() {});
-  }
-
-  void _processImage() async {
-    if (_isProcessing) return;
+  Future<void> _processImage(XFile image) async {
     setState(() => _isProcessing = true);
-
-    try {
-      final image = await _controller!.takePicture();
-      final inputImage = InputImage.fromFilePath(image.path);
-      final textRecognizer = GoogleMlKit.vision.textRecognizer();
-      final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
-
-      setState(() {
-        _recognizedText = recognizedText.text.isEmpty 
-            ? "لم يتم العثور على نص. حاول مرة أخرى." 
-            : "النص المستخرج: \n ${recognizedText.text}";
-        _isProcessing = false;
-      });
-      
-      textRecognizer.close();
-    } catch (e) {
-      setState(() {
-        _recognizedText = "خطأ في المعالجة: $e";
-        _isProcessing = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_controller == null || !_controller!.value.isInitialized) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(title: const Text('عدسة ميرور الذكية'), backgroundColor: Colors.transparent),
-      body: Stack(
-        children: [
-          CameraPreview(_controller!),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(_recognizedText, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center),
-                  const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    onPressed: _processImage,
-                    icon: _isProcessing ? const CircularProgressIndicator(color: Colors.white) : const Icon(Icons.auto_awesome),
-                    label: Text(_isProcessing ? "جاري التحليل..." : "التقاط وتنقيح بالذكاء الاصطناعي"),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    
+    final inputImage = InputImage.fromFilePath(image.path);
+    final RecognizedText recognizedText = await _textRecognizer.processImage(inputImage);
+    
+    setState(() {
+      _extractedText = recognizedText.text;
+      _isProcessing = false;
+    });
   }
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _textRecognizer.close();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("عدسة ميرور الذكية")),
+      body: Center(
+        child: Column(
+          children: [
+            if (_isProcessing) CircularProgressIndicator(),
+            Expanded(child: SingleChildScrollView(child: Text(_extractedText))),
+          ],
+        ),
+      ),
+    );
   }
 }
