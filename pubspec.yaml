@@ -18,3 +18,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/stories/
+  pdf: ^3.10.3
+  printing: ^5.11.0
