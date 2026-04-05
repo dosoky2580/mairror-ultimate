@@ -13,12 +13,10 @@ dependencies:
   path_provider: ^2.0.11
   shared_preferences: ^2.0.15
   google_fonts: ^3.0.1
+  pdf: ^3.10.3
+  printing: ^5.11.0
 
 flutter:
   uses-material-design: true
   assets:
     - assets/data/stories/
-  pdf: ^3.10.3
-  printing: ^5.11.0
-  pdf: ^3.10.3
-  printing: ^5.11.0
