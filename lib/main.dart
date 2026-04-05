@@ -2,23 +2,21 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const MairrorApp());
+  runApp(MirrorUltimate());
 }
 
-class MairrorApp extends StatelessWidget {
-  const MairrorApp({super.key});
-
+class MirrorUltimate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '🛡️ Mairror Ultimate',
+      title: 'Mirror Ultimate',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: Colors.indigo,
-        useMaterial3: true,
+        primarySwatch: Colors.teal,
+        fontFamily: 'Tajawal',
       ),
-      home: const HomeScreen(),
+      home: HomeScreen(), // شيلنا الـ const من هنا عشان الطريق يفتح
     );
   }
 }
