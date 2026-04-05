@@ -13,7 +13,7 @@ class _SmartCameraScreenState extends State<SmartCameraScreen> {
   void initState() {
     super.initState();
     availableCameras().then((cameras) {
-      controller = CameraController(cameras[0], ResolutionPreset.medium);
+      controller = CameraController(cameras[0], ResolutionPreset.high);
       controller!.initialize().then((_) {
         if (!mounted) return;
         setState(() {});
@@ -22,21 +22,18 @@ class _SmartCameraScreenState extends State<SmartCameraScreen> {
   }
 
   @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (controller == null || !controller!.value.isInitialized) {
       return Center(child: CircularProgressIndicator());
     }
     return Scaffold(
-      body: Stack(
-        children: [
-          CameraPreview(controller!),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: Text("عدسة ميرور الذكية", style: TextStyle(color: Colors.white, backgroundColor: Colors.black54)),
-          ),
-        ],
-      ),
+      body: CameraPreview(controller!),
     );
   }
 }
