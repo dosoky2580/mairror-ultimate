@@ -1,16 +1,20 @@
 name: mairror_ultimate
-description: Mairror Ultimate - The World's Largest Story & Translation App
+description: Mirror Ultimate 2026 - The Final Vision
 version: 1.0.0+1
+
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=2.17.0 <3.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
-  speech_to_text: ^6.6.1
-  flutter_tts: ^3.8.5
-  http: ^1.2.1
+  flutter_tts: ^3.6.3
+  camera: ^0.10.3
+  path_provider: ^2.0.11
+  shared_preferences: ^2.0.15
+  google_fonts: ^3.0.1
+
 flutter:
   uses-material-design: true
   assets:
-    - assets/data/
     - assets/data/stories/
