@@ -1,30 +1,27 @@
 name: mairror_ultimate
-description: Mirror Ultimate 2026 - The Final Vision
+description: Mairror Ultimate - Translation App
+publish_to: 'none'
 version: 1.0.0+1
-
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
 dependencies:
   flutter:
     sdk: flutter
-  flutter_tts: ^4.2.2
+  cupertino_icons: ^1.0.6
+  speech_to_text: ^6.6.1
+  flutter_tts: ^3.8.5
   camera: ^0.11.0
-  path_provider: ^2.1.2
-  shared_preferences: ^2.2.2
-  google_fonts: ^6.1.0
-  pdf: ^3.10.8
-  printing: ^5.11.1
-  url_launcher: ^6.2.4
-  share_plus: ^7.2.1
   google_mlkit_text_recognition: ^0.11.0
-
+  http: ^1.2.1
+  flutter_secure_storage: ^9.0.0
+  flame: ^1.10.1
+  shared_preferences: ^2.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-
 flutter:
   uses-material-design: true
   assets:
-    - assets/data/stories/
+    - assets/
