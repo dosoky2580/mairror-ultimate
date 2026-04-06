@@ -25,8 +25,8 @@ dependencies:
   file_picker: ^8.0.0
   pdf: ^3.11.1
   printing: ^5.13.2
-  # الألعاب والرسوميات
-  chess_vectors_flutter: ^0.2.0
+  # الألعاب (الإصدار المتوافق)
+  chess_vectors_flutter: ^0.8.1
   vector_math: ^2.1.4
 
 dev_dependencies:
