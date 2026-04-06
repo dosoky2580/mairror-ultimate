@@ -14,19 +14,16 @@ dependencies:
   camera: ^0.11.0+2
   path_provider: ^2.1.3
   share_plus: ^10.1.0
-  # محركات الصوت
   speech_to_text: ^6.6.2
   flutter_tts: ^4.2.2
-  # العدسة والذكاء الاصطناعي
   google_ml_kit: ^0.16.3
   google_mlkit_text_recognition: ^0.14.0
   google_mlkit_commons: ^0.9.0
-  # الملفات والـ PDF
   file_picker: ^8.0.0
   pdf: ^3.11.1
   printing: ^5.13.2
-  # الألعاب (الإصدار المتوافق)
-  chess_vectors_flutter: ^0.8.1
+  # المكتبة البديلة والمستقرة للشطرنج
+  flutter_chess_board: ^2.0.0
   vector_math: ^2.1.4
 
 dev_dependencies:
