@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'dart:convert'; // مكتبة الجيسون اللي نسيناها
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -103,7 +103,9 @@ class _VoiceWorldState extends State<VoiceWorld> {
     try {
       final url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${Uri.encodeComponent(_in.text)}';
       final res = await http.get(Uri.parse(url));
-      setState(() => _out = json.decode(res.body)[0][0][0]);
+      if (res.statusCode == 200) {
+        setState(() => _out = json.decode(res.body)[0][0][0]);
+      }
     } catch (e) { setState(() => _out = "خطأ في الاتصال"); }
     setState(() => _load = false);
   }
@@ -114,7 +116,7 @@ class _VoiceWorldState extends State<VoiceWorld> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(children: [
-          TextField(controller: _in, maxLines: 4, decoration: const InputDecoration(hintText: "اكتب بالعربية...", border: OutlineInputBorder())),
+          TextField(controller: _in, maxLines: 4, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "اكتب بالعربية...", border: OutlineInputBorder())),
           const SizedBox(height: 10),
           ElevatedButton(onPressed: _trans, style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)), child: _load ? const CircularProgressIndicator(color: Colors.white) : const Text("ترجمة الآن")),
           const SizedBox(height: 20),
