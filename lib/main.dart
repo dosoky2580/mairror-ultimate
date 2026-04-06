@@ -54,37 +54,41 @@ class Dashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(context, title, sub, icon, color, Widget target) => Card(
-    margin: const EdgeInsets.only(bottom: 20),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: color.withOpacity(0.3))),
-    color: const Color(0xFF161B22),
-    child: InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => target)),
-      borderRadius: BorderRadius.circular(20),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Icon(icon, size: 40, color: color),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text(sub, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                ],
+  Widget _buildCard(BuildContext context, String title, String sub, IconData icon, Color color, Widget target) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 20),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: color.withOpacity(0.3), width: 1),
+      ),
+      color: const Color(0xFF161B22),
+      child: InkWell(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => target)),
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Icon(icon, size: 40, color: color),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(sub, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  ],
+                ),
               ),
-            ),
-            const Icon(Icons.chevron_right, color: Colors.white24),
-          ],
+              const Icon(Icons.chevron_right, color: Colors.white24),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// === برمجة عالم الترجمة (شغال بجد) ===
 class VoiceWorld extends StatefulWidget {
   const VoiceWorld({super.key});
   @override State<VoiceWorld> createState() => _VoiceWorldState();
@@ -93,28 +97,26 @@ class _VoiceWorldState extends State<VoiceWorld> {
   final TextEditingController _in = TextEditingController();
   String _out = "الترجمة ستظهر هنا...";
   bool _load = false;
-
   Future<void> _trans() async {
     if(_in.text.isEmpty) return;
     setState(() => _load = true);
-    final url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${Uri.encodeComponent(_in.text)}';
-    final res = await http.get(Uri.parse(url));
-    if(res.statusCode == 200) {
+    try {
+      final url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${Uri.encodeComponent(_in.text)}';
+      final res = await http.get(Uri.parse(url));
       setState(() => _out = json.decode(res.body)[0][0][0]);
-    }
+    } catch (e) { setState(() => _out = "خطأ في الاتصال"); }
     setState(() => _load = false);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("عالم الترجمة")),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20),
         child: Column(children: [
           TextField(controller: _in, maxLines: 4, decoration: const InputDecoration(hintText: "اكتب بالعربية...", border: OutlineInputBorder())),
           const SizedBox(height: 10),
-          ElevatedButton(onPressed: _trans, style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)), child: _load ? const CircularProgressIndicator() : const Text("ترجمة إلى الإنجليزية")),
+          ElevatedButton(onPressed: _trans, style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)), child: _load ? const CircularProgressIndicator(color: Colors.white) : const Text("ترجمة الآن")),
           const SizedBox(height: 20),
           Container(padding: const EdgeInsets.all(15), width: double.infinity, decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10)), child: Text(_out, style: const TextStyle(fontSize: 18, color: Colors.cyanAccent))),
         ]),
@@ -123,7 +125,6 @@ class _VoiceWorldState extends State<VoiceWorld> {
   }
 }
 
-// === برمجة عالم العدسة (قريباً: OCR) ===
 class CameraWorld extends StatefulWidget {
   final List<CameraDescription> cameras;
   const CameraWorld({super.key, required this.cameras});
@@ -131,24 +132,14 @@ class CameraWorld extends StatefulWidget {
 }
 class _CameraWorldState extends State<CameraWorld> {
   CameraController? _c;
-  final TextRecognizer _ocr = TextRecognizer();
-  String _scan = "وجه الكاميرا نحو النص";
-
   @override void initState() { super.initState(); if(widget.cameras.isNotEmpty) { _c = CameraController(widget.cameras[0], ResolutionPreset.high); _c!.initialize().then((_) => setState(() {})); } }
-  @override void dispose() { _c?.dispose(); _ocr.close(); super.dispose(); }
+  @override void dispose() { _c?.dispose(); super.dispose(); }
   @override Widget build(BuildContext context) {
     if (_c == null || !_c!.value.isInitialized) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    return Scaffold(
-      body: Stack(children: [
-        CameraPreview(_c!),
-        Positioned(top: 40, left: 20, child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context))),
-        Positioned(bottom: 20, left: 20, right: 20, child: Container(padding: const EdgeInsets.all(10), color: Colors.black87, child: Text(_scan, style: const TextStyle(color: Colors.white, fontSize: 16)))),
-      ]),
-    );
+    return Scaffold(body: Stack(children: [CameraPreview(_c!), Positioned(top: 40, left: 20, child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))]));
   }
 }
 
-// الشاشات الباقية كـ هياكل مؤقتة
 class DocWorld extends StatelessWidget { const DocWorld({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("عالم المستندات")), body: const Center(child: Text("قريباً: معالج الـ PDF"))); }
-class StoryWorld extends StatelessWidget { const StoryWorld({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("عالم الإلهام")), body: const Center(child: Text("قريباً: محرك القصص الصوتي"))); }
+class StoryWorld extends StatelessWidget { const StoryWorld({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("عالم الإلهام")), body: const Center(child: Text("قريباً: محرك القصص"))); }
 class GameWorld extends StatelessWidget { const GameWorld({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("ساحة الألعاب")), body: const Center(child: Text("قريباً: الألعاب الذكية"))); }
