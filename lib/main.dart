@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -35,28 +34,36 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Mairror Ultimate"), centerTitle: true, elevation: 0),
+      appBar: AppBar(title: const Text("Mirror Ultimate v2.0"), centerTitle: true, backgroundColor: Colors.transparent, elevation: 0),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: GridView.count(
-          crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15,
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
           children: [
-            _card(context, "المترجم الذكي", Icons.g_translate, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VoiceTransScreen()))),
-            _card(context, "عدسة ميرور", Icons.camera_alt, Colors.amber, () => Navigator.push(context, MaterialPageRoute(builder: (_) => CameraLensScreen(cameras: cameras)))),
-            _card(context, "الكتب والمستندات", Icons.menu_book, Colors.green, () {}),
-            _card(context, "ركن الإلهام", Icons.auto_awesome, Colors.purple, () {}),
+            const Icon(Icons.auto_awesome, size: 80, color: Colors.blueAccent),
+            const SizedBox(height: 30),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15,
+                children: [
+                  _btn(context, "العدسة الذكية", Icons.camera_enhance, Colors.cyan, () => Navigator.push(context, MaterialPageRoute(builder: (_) => CameraLensScreen(cameras: cameras)))),
+                  _btn(context, "مترجم الصوت", Icons.mic, Colors.greenAccent, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TranslatorScreen()))),
+                  _btn(context, "المستندات", Icons.description, Colors.orange, () {}),
+                  _btn(context, "الإعدادات", Icons.settings, Colors.grey, () {}),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _card(context, title, icon, color, tap) => GestureDetector(
+  Widget _btn(context, title, icon, color, tap) => GestureDetector(
     onTap: tap,
     child: Container(
-      decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(25), border: Border.all(color: color.withOpacity(0.3))),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon, size: 50, color: color),
+        Icon(icon, size: 45, color: color),
         const SizedBox(height: 10),
         Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
       ]),
@@ -64,41 +71,55 @@ class Dashboard extends StatelessWidget {
   );
 }
 
-// --- إصلاح المترجم (عشان ميعرضش كود) ---
-class VoiceTransScreen extends StatefulWidget {
-  const VoiceTransScreen({super.key});
-  @override State<VoiceTransScreen> createState() => _VoiceTransState();
+class TranslatorScreen extends StatefulWidget {
+  const TranslatorScreen({super.key});
+  @override State<TranslatorScreen> createState() => _TranslatorState();
 }
-class _VoiceTransState extends State<VoiceTransScreen> {
+
+class _TranslatorState extends State<TranslatorScreen> {
   final TextEditingController _in = TextEditingController();
-  String _out = "";
+  String _out = "الترجمة ستظهر هنا...";
+  bool _loading = false;
+
   Future<void> _translate() async {
-    final res = await http.get(Uri.parse('https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${Uri.encodeComponent(_in.text)}'));
-    setState(() => _out = json.decode(res.body)[0][0][0]);
+    if (_in.text.isEmpty) return;
+    setState(() => _loading = true);
+    try {
+      final res = await http.get(Uri.parse('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${Uri.encodeComponent(_in.text)}'));
+      setState(() => _out = json.decode(res.body)[0][0][0]);
+    } catch (e) {
+      setState(() => _out = "خطأ في الاتصال");
+    }
+    setState(() => _loading = false);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("المترجم الفوري")),
-      body: Padding(padding: const EdgeInsets.all(20), child: Column(children: [
-        TextField(controller: _in, decoration: const InputDecoration(hintText: "اكتب هنا...")),
-        ElevatedButton(onPressed: _translate, child: const Text("ترجمة")),
-        const SizedBox(height: 30),
-        Text(_out, style: const TextStyle(fontSize: 22, color: Colors.greenAccent)),
-      ])),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(children: [
+          TextField(controller: _in, maxLines: 4, decoration: const InputDecoration(hintText: "أدخل النص للترجمة...", border: OutlineInputBorder())),
+          const SizedBox(height: 20),
+          ElevatedButton(onPressed: _translate, style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)), child: _loading ? const CircularProgressIndicator() : const Text("ترجمة الآن")),
+          const SizedBox(height: 40),
+          Container(width: double.infinity, padding: const EdgeInsets.all(15), decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10)), child: Text(_out, style: const TextStyle(fontSize: 20, color: Colors.cyanAccent))),
+        ]),
+      ),
     );
   }
 }
 
-// --- إصلاح العدسة (تفعيل الكاميرا الحقيقية) ---
 class CameraLensScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
   const CameraLensScreen({super.key, required this.cameras});
   @override State<CameraLensScreen> createState() => _CameraLensState();
 }
+
 class _CameraLensState extends State<CameraLensScreen> {
   late CameraController _ctrl;
-  @override void initState() { super.initState(); _ctrl = CameraController(widget.cameras[0], ResolutionPreset.max); _ctrl.initialize().then((_) => setState(() {})); }
+  @override void initState() { super.initState(); _ctrl = CameraController(widget.cameras[0], ResolutionPreset.high); _ctrl.initialize().then((_) => setState(() {})); }
   @override void dispose() { _ctrl.dispose(); super.dispose(); }
   @override
   Widget build(BuildContext context) {
@@ -106,8 +127,8 @@ class _CameraLensState extends State<CameraLensScreen> {
     return Scaffold(
       body: Stack(children: [
         CameraPreview(_ctrl),
-        Positioned(bottom: 30, left: 0, right: 0, child: Center(child: IconButton(icon: const Icon(Icons.circle, size: 70, color: Colors.white), onPressed: () {}))),
-        Positioned(top: 40, left: 20, child: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context))),
+        Positioned(top: 40, left: 20, child: IconButton(icon: const Icon(Icons.close, color: Colors.white, size: 30), onPressed: () => Navigator.pop(context))),
+        Positioned(bottom: 50, left: 0, right: 0, child: const Center(child: Text("وجه الكاميرا نحو النص", style: TextStyle(color: Colors.white, backgroundColor: Colors.black54, fontSize: 18)))),
       ]),
     );
   }
