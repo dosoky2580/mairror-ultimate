@@ -1,31 +1,25 @@
 name: mairror_ultimate
-description: Mairror Ultimate - The Final Masterpiece
+description: A new Flutter project.
 publish_to: 'none'
 version: 1.0.0+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
-  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
-  speech_to_text: ^7.3.0
-  flutter_tts: ^4.0.2
-  camera: ^0.11.0+2
-  google_mlkit_text_recognition: ^0.13.0
-  http: ^1.2.1
-  flutter_secure_storage: ^9.2.2
-  shared_preferences: ^2.2.3
+  cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  camera: ^0.10.5+5
+  google_mlkit_text_recognition: ^0.10.0
+  path_provider: ^2.1.1
+  share_plus: ^7.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
-
-dependency_overrides:
-  js: ^0.7.1
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
