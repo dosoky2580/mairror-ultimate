@@ -4,41 +4,25 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local-properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
-}
-
 android {
     namespace "com.example.mairror_ultimate"
-    namespace "com.tetocollctionway.mairror_ultimate"
-    compileSdk 34
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = '17'
-    }
+    compileSdk 34 // رفع النسخة لأحدث متطلبات جوجل
 
     defaultConfig {
-        applicationId "com.tetocollctionway.mairror_ultimate"
-        minSdk 21
+        applicationId "com.example.mairror_ultimate"
+        minSdk 24    // الحد الأدنى لتشغيل الذكاء الاصطناعي
         targetSdk 34
         versionCode 1
         versionName "1.0.0"
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.debug
+        
+        // دي مهمة جداً لـ FFmpeg
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
         }
     }
 }
 
-dependencies {}
+dependencies {
+    // إضافة المكتبة بشكل مباشر لضمان التحميل
+    implementation "com.arthenica:ffmpeg-kit-full:6.0-2"
+}
