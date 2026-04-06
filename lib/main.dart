@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+// Note: Keeping other imports for future integration
+// import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final cameras = await availableCameras();
+  List<CameraDescription> cameras = [];
+  try {
+    cameras = await availableCameras();
+  } catch (e) {
+    print("Camera error: $e");
+  }
   runApp(MairrorUltimateApp(cameras: cameras));
 }
 
@@ -18,8 +24,7 @@ class MairrorUltimateApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark().copyWith(
-        primaryColor: const Color(0xFF1E3C72),
-        scaffoldBackgroundColor: const Color(0xFF0F172A),
+        scaffoldBackgroundColor: const Color(0xFF0F172A), // Dark Background
       ),
       home: Dashboard(cameras: cameras),
       debugShowCheckedModeBanner: false,
@@ -34,102 +39,97 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Mirror Ultimate v2.0"), centerTitle: true, backgroundColor: Colors.transparent, elevation: 0),
+      appBar: AppBar(
+        title: const Text("🛡️ Mairror Ultimate", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Tajawal')),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
           children: [
-            const Icon(Icons.auto_awesome, size: 80, color: Colors.blueAccent),
-            const SizedBox(height: 30),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15,
-                children: [
-                  _btn(context, "العدسة الذكية", Icons.camera_enhance, Colors.cyan, () => Navigator.push(context, MaterialPageRoute(builder: (_) => CameraLensScreen(cameras: cameras)))),
-                  _btn(context, "مترجم الصوت", Icons.mic, Colors.greenAccent, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TranslatorScreen()))),
-                  _btn(context, "المستندات", Icons.description, Colors.orange, () {}),
-                  _btn(context, "الإعدادات", Icons.settings, Colors.grey, () {}),
-                ],
-              ),
-            ),
+            const Text("اختر عالمك للبدء", textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16)),
+            const SizedBox(height: 25),
+            
+            // --- الأركان تحت بعض (List Item Style) ---
+            _buildListTile(context, "الترجمة الذكية (STT/TTS)", Icons.translate, Colors.blueAccent, 
+              const VoiceTransScreen()),
+            _buildListTile(context, "عدسة ميرور (AI Runtimes)", Icons.camera_enhance, Colors.amber, 
+              CameraLensScreen(cameras: cameras)),
+            _buildListTile(context, "الكتب والمستندات (PDF/OCR)", Icons.description, Colors.greenAccent, 
+              const LibraryScreen()),
+            _buildListTile(context, "ركن الإلهام الصوفي (Voices)", Icons.auto_awesome, Colors.purpleAccent, 
+              const InspirationScreen()),
+            _buildListTile(context, "ساحة الألعاب الذكية (Chess)", Icons.sports_esports, Colors.redAccent, 
+              const GamesScreen()),
           ],
         ),
       ),
     );
   }
 
-  Widget _btn(context, title, icon, color, tap) => GestureDetector(
-    onTap: tap,
-    child: Container(
-      decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(25), border: Border.all(color: color.withOpacity(0.3))),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon, size: 45, color: color),
-        const SizedBox(height: 10),
-        Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-      ]),
+  // ويدجت احترافية لعرض العنصر في قائمة
+  Widget _buildListTile(context, title, icon, color, Widget screen) => Card(
+    elevation: 4,
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    color: const Color(0xFF1E293B), // Darker Gray for Tiles
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withOpacity(0.2), width: 1)),
+    child: InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        height: 100,
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          children: [
+            Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(15)),
+              child: Icon(icon, size: 40, color: color),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Tajawal'),
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 20),
+          ],
+        ),
+      ),
     ),
   );
 }
 
-class TranslatorScreen extends StatefulWidget {
-  const TranslatorScreen({super.key});
-  @override State<TranslatorScreen> createState() => _TranslatorState();
-}
+// === شاشات افتراضية (هياكل) عشان التصفح يشتغل ===
 
-class _TranslatorState extends State<TranslatorScreen> {
-  final TextEditingController _in = TextEditingController();
-  String _out = "الترجمة ستظهر هنا...";
-  bool _loading = false;
-
-  Future<void> _translate() async {
-    if (_in.text.isEmpty) return;
-    setState(() => _loading = true);
-    try {
-      final res = await http.get(Uri.parse('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${Uri.encodeComponent(_in.text)}'));
-      setState(() => _out = json.decode(res.body)[0][0][0]);
-    } catch (e) {
-      setState(() => _out = "خطأ في الاتصال");
-    }
-    setState(() => _loading = false);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("المترجم الفوري")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(children: [
-          TextField(controller: _in, maxLines: 4, decoration: const InputDecoration(hintText: "أدخل النص للترجمة...", border: OutlineInputBorder())),
-          const SizedBox(height: 20),
-          ElevatedButton(onPressed: _translate, style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)), child: _loading ? const CircularProgressIndicator() : const Text("ترجمة الآن")),
-          const SizedBox(height: 40),
-          Container(width: double.infinity, padding: const EdgeInsets.all(15), decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10)), child: Text(_out, style: const TextStyle(fontSize: 20, color: Colors.cyanAccent))),
-        ]),
-      ),
-    );
-  }
-}
+class LibraryScreen extends StatelessWidget { const LibraryScreen({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("الكتب والمستندات")), body: Center(child: Text("جاري تطوير المكتبة", style: TextStyle(color: Colors.white, fontSize: 20)))); }
+class InspirationScreen extends StatelessWidget { const InspirationScreen({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("ركن الإلهام")), body: Center(child: Text("جاري تحضير الإلهام", style: TextStyle(color: Colors.white, fontSize: 20)))); }
+class GamesScreen extends StatelessWidget { const GamesScreen({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("ساحة الألعاب")), body: Center(child: Text("جاري تهيئة الرقعة", style: TextStyle(color: Colors.white, fontSize: 20)))); }
+class VoiceTransScreen extends StatelessWidget { const VoiceTransScreen({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("الترجمة")), body: Center(child: Text("جاري ربط المحرك", style: TextStyle(color: Colors.white, fontSize: 20)))); }
 
 class CameraLensScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
   const CameraLensScreen({super.key, required this.cameras});
   @override State<CameraLensScreen> createState() => _CameraLensState();
 }
-
 class _CameraLensState extends State<CameraLensScreen> {
-  late CameraController _ctrl;
-  @override void initState() { super.initState(); _ctrl = CameraController(widget.cameras[0], ResolutionPreset.high); _ctrl.initialize().then((_) => setState(() {})); }
-  @override void dispose() { _ctrl.dispose(); super.dispose(); }
+  CameraController? _ctrl;
+  @override void initState() {
+    super.initState();
+    if (widget.cameras.isNotEmpty) {
+      _ctrl = CameraController(widget.cameras[0], ResolutionPreset.max);
+      _ctrl!.initialize().then((_) => setState(() {}));
+    }
+  }
+  @override void dispose() { _ctrl?.dispose(); super.dispose(); }
   @override
   Widget build(BuildContext context) {
-    if (!_ctrl.value.isInitialized) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    return Scaffold(
-      body: Stack(children: [
-        CameraPreview(_ctrl),
-        Positioned(top: 40, left: 20, child: IconButton(icon: const Icon(Icons.close, color: Colors.white, size: 30), onPressed: () => Navigator.pop(context))),
-        Positioned(bottom: 50, left: 0, right: 0, child: const Center(child: Text("وجه الكاميرا نحو النص", style: TextStyle(color: Colors.white, backgroundColor: Colors.black54, fontSize: 18)))),
-      ]),
-    );
+    if (_ctrl == null || !_ctrl!.value.isInitialized) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(body: Stack(children: [CameraPreview(_ctrl!), Positioned(top: 40, left: 20, child: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)))]));
   }
 }
