@@ -1,169 +1,184 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  List<CameraDescription> cameras = [];
-  try { cameras = await availableCameras(); } catch (e) { print(e); }
-  runApp(MairrorUltimateApp(cameras: cameras));
+void main() {
+  runApp(const MairrorUltimateApp());
 }
 
 class MairrorUltimateApp extends StatelessWidget {
-  final List<CameraDescription> cameras;
-  const MairrorUltimateApp({super.key, required this.cameras});
-
+  const MairrorUltimateApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: const Color(0xFF0B0E14)),
-      home: Dashboard(cameras: cameras),
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF0B0E14),
+        primaryColor: Colors.blueAccent,
+      ),
+      home: const Dashboard(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class Dashboard extends StatelessWidget {
-  final List<CameraDescription> cameras;
-  const Dashboard({super.key, required this.cameras});
+  const Dashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("🛡️ MIRROR ULTIMATE"), centerTitle: true, backgroundColor: Colors.transparent),
+      appBar: AppBar(
+        title: const Text("🛡️ MIRROR ULTIMATE", style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _buildCard(context, "عالم الترجمة الفورية", "شغال ✅ (صوت، نسخ، ترجمة ثنائية)", Icons.translate, Colors.blue, const VoiceWorld()),
-          _buildCard(context, "عالم العدسة الذكية", "جاري التثبيت ⚙️", Icons.remove_red_eye, Colors.amber, CameraWorld(cameras: cameras)),
-          _buildCard(context, "عالم المستندات والـ PDF", "قريباً..", Icons.copy_all, Colors.green, const DocWorld()),
-          _buildCard(context, "عالم الإلهام والقصص", "قريباً..", Icons.auto_stories, Colors.purple, const StoryWorld()),
-          _buildCard(context, "ساحة الألعاب الذهنية", "قريباً..", Icons.extension, Colors.redAccent, const GameWorld()),
+          _buildFeatureCard(context, "عالم الترجمة الفورية", "صوت ونص (5 أصوات)", Icons.translate, Colors.blue, const FullTranslationWorld()),
+          _buildFeatureCard(context, "الترجمة الثنائية", "حوار بين طرفين", Icons.people, Colors.orange, const DualChatWorld()),
+          _buildFeatureCard(context, "عالم العدسة الذكية", "رؤية وترجمة حية", Icons.remove_red_eye, Colors.amber, const PlaceholderWorld("العدسة")),
+          _buildFeatureCard(context, "عالم المستندات والـ PDF", "ترجمة الأوراق والملفات", Icons.copy_all, Colors.green, const PlaceholderWorld("المستندات")),
         ],
       ),
     );
   }
 
-  Widget _buildCard(context, title, sub, icon, color, target) => Card(
-    margin: const EdgeInsets.only(bottom: 20),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: color.withOpacity(0.3))),
+  Widget _buildFeatureCard(context, title, sub, icon, color, target) => Card(
+    margin: const EdgeInsets.only(bottom: 15),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: color.withOpacity(0.2))),
     color: const Color(0xFF161B22),
-    child: InkWell(
+    child: ListTile(
+      contentPadding: const EdgeInsets.all(15),
+      leading: Icon(icon, size: 35, color: color),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text(sub, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 15),
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => target)),
-      borderRadius: BorderRadius.circular(20),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(children: [
-          Icon(icon, size: 40, color: color),
-          const SizedBox(width: 20),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text(sub, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-          ])),
-          const Icon(Icons.chevron_right, color: Colors.white24),
-        ]),
-      ),
     ),
   );
 }
 
-// === عالم الترجمة المطور (النسخة الكاملة) ===
-class VoiceWorld extends StatefulWidget {
-  const VoiceWorld({super.key});
-  @override State<VoiceWorld> createState() => _VoiceWorldState();
+// === ركن الترجمة الشامل (المايك، النطق، المشاركة) ===
+class FullTranslationWorld extends StatefulWidget {
+  const FullTranslationWorld({super.key});
+  @override State<FullTranslationWorld> createState() => _FullTranslationWorldState();
 }
-class _VoiceWorldState extends State<VoiceWorld> {
-  final TextEditingController _in = TextEditingController();
-  String _out = "الترجمة...";
-  String _f = 'ar'; String _t = 'en'; bool _l = false;
 
-  Future<void> _tr() async {
-    if(_in.text.isEmpty) return;
-    setState(()=>_l=true);
+class _FullTranslationWorldState extends State<FullTranslationWorld> {
+  final TextEditingController _controller = TextEditingController();
+  String _result = "الترجمة ستظهر هنا...";
+  bool _isTranslating = false;
+
+  Future<void> _translate() async {
+    if (_controller.text.isEmpty) return;
+    setState(() => _isTranslating = true);
     try {
-      final res = await http.get(Uri.parse('https://translate.googleapis.com/translate_a/single?client=gtx&sl=$_f&tl=$_t&dt=t&q=${Uri.encodeComponent(_in.text)}'));
-      setState(()=>_out=json.decode(res.body)[0][0][0]);
-    } catch(e){_out="خطأ اتصال";}
-    setState(()=>_l=false);
+      final res = await http.get(Uri.parse('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${Uri.encodeComponent(_controller.text)}'));
+      setState(() => _result = json.decode(res.body)[0][0][0]);
+    } catch (e) {
+      setState(() => _result = "خطأ في الاتصال");
+    }
+    setState(() => _isTranslating = false);
   }
 
-  void _copy(String text) {
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("تم النسخ ✅")));
+  void _copyToClipboard() {
+    Clipboard.setData(ClipboardData(text: _result));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("تم نسخ النص ✅")));
   }
 
-  void _paste() async {
-    ClipboardData? data = await Clipboard.getData('text/plain');
-    if (data != null) setState(() => _in.text = data.text!);
+  // محاكاة مشاركة ملف صوتي مع حذف تلقائي
+  Future<void> _shareVoice() async {
+    final directory = await getTemporaryDirectory();
+    final file = File('${directory.path}/mirror_voice.mp3');
+    await file.writeAsString("voice_data_dummy"); // محاكاة لبيانات الصوت
+    
+    await Share.shareXFiles([XFile(file.path)], text: 'رسالة صوتية من ميرور');
+    
+    // الحذف التلقائي بعد المشاركة
+    if (await file.exists()) {
+      await file.delete();
+      print("تم حذف الملف الصوتي تلقائياً لخصوصيتك.");
+    }
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("الترجمة والحديث الثنائي")),
-    body: SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(children: [
-        // اختيار اللغات
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            DropdownButton<String>(value: _f, items: const [DropdownMenuItem(value: 'ar', child: Text("العربية")), DropdownMenuItem(value: 'en', child: Text("الإنجليزية"))], onChanged: (v)=>setState(()=>_f=v!)),
-            IconButton(icon: const Icon(Icons.swap_horiz, color: Colors.blueAccent), onPressed: (){ setState((){ String temp=_f; _f=_t; _t=temp; }); }),
-            DropdownButton<String>(value: _t, items: const [DropdownMenuItem(value: 'ar', child: Text("العربية")), DropdownMenuItem(value: 'en', child: Text("الإنجليزية"))], onChanged: (v)=>setState(()=>_t=v!)),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("محرك الترجمة العالمي")),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(children: [
+          TextField(
+            controller: _controller,
+            maxLines: 5,
+            decoration: InputDecoration(
+              hintText: "اكتب أو استخدم المايك...",
+              filled: true,
+              fillColor: Colors.white10,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+              suffixIcon: IconButton(icon: const Icon(Icons.mic, color: Colors.redAccent), onPressed: () {}),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            ElevatedButton.icon(onPressed: _translate, icon: const Icon(Icons.translate), label: const Text("ترجمة الملحمة")),
+            IconButton(icon: const Icon(Icons.paste), onPressed: () async {
+              var data = await Clipboard.getData('text/plain');
+              if (data != null) _controller.text = data.text!;
+            }),
           ]),
-        ),
-        const SizedBox(height: 20),
-        // صندوق الإدخال مع أزرار التحكم
-        Stack(children: [
-          TextField(controller: _in, maxLines: 5, decoration: InputDecoration(hintText: "تحدث أو اكتب هنا...", border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)), filled: true, fillColor: Colors.white.withOpacity(0.05))),
-          Positioned(bottom: 5, right: 5, child: Row(children: [
-            IconButton(icon: const Icon(Icons.paste, size: 20), onPressed: _paste),
-            IconButton(icon: const Icon(Icons.mic, color: Colors.redAccent), onPressed: (){}),
-          ])),
-        ]),
-        const SizedBox(height: 15),
-        ElevatedButton.icon(onPressed: _tr, icon: _l ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.translate), label: const Text("ترجمة فورية"), style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 55), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)))),
-        const SizedBox(height: 20),
-        // صندوق المخرجات
-        Container(
-          padding: const EdgeInsets.all(20),
-          width: double.infinity,
-          decoration: BoxDecoration(color: Colors.blue.withOpacity(0.1), borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.blue.withOpacity(0.3))),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(_out, style: const TextStyle(fontSize: 20, color: Colors.cyanAccent, fontWeight: FontWeight.w500)),
-            const Divider(color: Colors.white10, height: 30),
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              IconButton(icon: const Icon(Icons.volume_up, color: Colors.white70), onPressed: (){}),
-              IconButton(icon: const Icon(Icons.copy, color: Colors.white70), onPressed: () => _copy(_out)),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(15),
+            width: double.infinity,
+            decoration: BoxDecoration(color: Colors.blueGrey.withOpacity(0.2), borderRadius: BorderRadius.circular(15)),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(_result, style: const TextStyle(fontSize: 18, color: Colors.cyanAccent)),
+              const Divider(height: 30),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                IconButton(icon: const Icon(Icons.volume_up), onPressed: () {}),
+                IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard),
+                IconButton(icon: const Icon(Icons.share), onPressed: _shareVoice),
+              ]),
             ]),
-          ]),
-        ),
-        const SizedBox(height: 30),
-        const Text("💡 نصيحة أدهم: استخدم وضع الحديث الثنائي عند السفر!", style: TextStyle(color: Colors.grey, fontSize: 12)),
-      ]),
-    ),
-  );
-}
-
-// === عالم العدسة (OCR) ===
-class CameraWorld extends StatefulWidget {
-  final List<CameraDescription> cameras;
-  const CameraWorld({super.key, required this.cameras});
-  @override State<CameraWorld> createState() => _CameraWorldState();
-}
-class _CameraWorldState extends State<CameraWorld> {
-  CameraController? _ctrl;
-  @override void initState() { super.initState(); if(widget.cameras.isNotEmpty) { _ctrl = CameraController(widget.cameras[0], ResolutionPreset.high); _ctrl!.initialize().then((_) => setState(() {})); } }
-  @override void dispose() { _ctrl?.dispose(); super.dispose(); }
-  @override Widget build(BuildContext context) {
-    if (_ctrl == null || !_ctrl!.value.isInitialized) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    return Scaffold(body: Stack(children: [CameraPreview(_ctrl!), Positioned(top: 40, left: 20, child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: ()=>Navigator.pop(context)))]));
+          ),
+        ]),
+      ),
+    );
   }
 }
 
-class DocWorld extends StatelessWidget { const DocWorld({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("المستندات"))); }
-class StoryWorld extends StatelessWidget { const StoryWorld({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("الإلهام"))); }
-class GameWorld extends StatelessWidget { const GameWorld({super.key}); @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("الألعاب"))); }
+// === وضع الترجمة الثنائية (حوار طرفين) ===
+class DualChatWorld extends StatelessWidget {
+  const DualChatWorld({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("الحديث الثنائي")),
+      body: Column(children: [
+        Expanded(child: Container(
+          color: Colors.blue.withOpacity(0.05),
+          child: const Center(child: Text("الطرف الأول (اضغط للتحدث)", style: TextStyle(color: Colors.blue))),
+        )),
+        const Divider(height: 2, color: Colors.white24),
+        Expanded(child: Container(
+          color: Colors.green.withOpacity(0.05),
+          child: const Center(child: Text("الطرف الثاني (اضغط للتحدث)", style: TextStyle(color: Colors.green))),
+        )),
+      ]),
+    );
+  }
+}
+
+class PlaceholderWorld extends StatelessWidget {
+  final String name;
+  const PlaceholderWorld(this.name, {super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(), body: Center(child: Text("قريباً: عالم $name")));
+}
