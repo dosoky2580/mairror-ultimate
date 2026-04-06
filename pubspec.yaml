@@ -1,5 +1,5 @@
 name: mairror_ultimate
-description: Mairror Ultimate - AI Powered
+description: Mairror Ultimate - The Final Masterpiece
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -17,8 +17,6 @@ dependencies:
   google_mlkit_text_recognition: ^0.13.0
   http: ^1.2.1
   flutter_secure_storage: ^9.2.2
-  # استخدام النسخة الأساسية لضمان التوافق
-  ffmpeg_kit_flutter: ^6.0.3
   shared_preferences: ^2.2.3
 
 dev_dependencies:
