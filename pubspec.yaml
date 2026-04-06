@@ -1,5 +1,5 @@
 name: mairror_ultimate
-description: Mairror Ultimate - AI Powered Intelligence
+description: Mairror Ultimate - AI Powered
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -11,31 +11,23 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  
-  # --- أدوات الذكاء والعدسة ---
-  google_mlkit_text_recognition: ^0.13.0 # للعدسة وترجمة المستندات
-  google_mlkit_translation: ^0.11.0     # ترجمة احترافية أوفلاين
-  camera: ^0.11.0+2                      # محرك الرؤية
-  
-  # --- الصوت والنسخ ---
-  speech_to_text: ^7.3.0                 # تحويل الكلام لنص (STT)
-  flutter_tts: ^4.0.2                    # محرك نسخ وتحويل النص لصوت (TTS)
-  path_provider: ^2.1.2                  # لإدارة ملفات الفيديو والمستندات
-  
-  # --- المستندات والتحرير ---
-  file_picker: ^8.0.0                    # لاختيار المستندات والفيديوهات
-  ffmpeg_kit_flutter: ^6.0.3             # محرك تحرير الفيديو الجبار (FFmpeg)
-  syncfusion_flutter_pdf: ^24.1.41       # لمعالجة وترجمة ملفات PDF
-  
+  speech_to_text: ^7.3.0
+  flutter_tts: ^4.0.2
+  camera: ^0.11.0+2
+  google_mlkit_text_recognition: ^0.13.0
   http: ^1.2.1
   flutter_secure_storage: ^9.2.2
+  # استخدام النسخة الأساسية لضمان التوافق
+  ffmpeg_kit_flutter: ^6.0.3
   shared_preferences: ^2.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
 
 dependency_overrides:
   js: ^0.7.1
-  web: ^0.5.1
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/
