@@ -1,6 +1,6 @@
 name: mairror_ultimate
 description: Mirror Ultimate 2026 - The Masterpiece.
-version: 1.0.0+1
+version: 1.1.0+2
 environment:
   sdk: '>=3.3.0 <4.0.0'
 
@@ -12,13 +12,14 @@ dependencies:
   camera: ^0.11.0+2
   path_provider: ^2.1.5
   share_plus: ^10.1.4
-  # أحدث محركات الصوت (2026)
+  # أحدث إصدارات محركات الصوت 2026 (متوافقة مع جيت هب)
   speech_to_text: ^7.0.0
   flutter_tts: ^4.2.2
-  # أحدث حزمة ذكاء اصطناعي من جوجل
+  # أحدث حزمة ML Kit من جوجل (العدسة والمترجم)
   google_ml_kit: ^0.19.0
   google_mlkit_text_recognition: ^0.14.0
-  # الملفات والألعاب
+  google_mlkit_translation: ^0.11.0
+  # إدارة الملفات والطباعة
   file_picker: ^8.1.7
   pdf: ^3.11.1
   printing: ^5.13.2
