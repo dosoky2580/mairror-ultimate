@@ -14,7 +14,7 @@ class _LensWorldState extends State<LensWorld> {
   final TextRecognizer _textRecognizer = TextRecognizer();
   final _translator = OnDeviceTranslator(sourceLanguage: TranslateLanguage.english, targetLanguage: TranslateLanguage.arabic);
   
-  // التعديل هنا: استخدام TextElement بدلاً من RecognizedTextElement
+  // استخدام التسمية الصحيحة 2026
   List<TextElement> _elements = [];
   List<String> _translatedTexts = [];
 
@@ -26,6 +26,7 @@ class _LensWorldState extends State<LensWorld> {
 
   Future<void> _initCamera() async {
     final cameras = await availableCameras();
+    if (cameras.isEmpty) return;
     _controller = CameraController(cameras[0], ResolutionPreset.high);
     await _controller!.initialize();
     if (mounted) setState(() {});
@@ -49,7 +50,7 @@ class _LensWorldState extends State<LensWorld> {
             final translated = await _translator.translateText(element.text);
             tempTranslations.add(translated);
           } catch (e) {
-            tempTranslations.add(element.text); // لو فشل يرجع النص الأصلي
+            tempTranslations.add(element.text);
           }
         }
       }
@@ -76,12 +77,9 @@ class _LensWorldState extends State<LensWorld> {
     }
     
     return Scaffold(
-      appBar: AppBar(title: const Text("عدسة ميرور الذكية"), backgroundColor: Colors.transparent),
-      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           CameraPreview(_controller!),
-          // رسم الطبقة الشفافة (AR Overlay)
           for (int i = 0; i < _elements.length; i++)
             Positioned(
               left: _elements[i].boundingBox.left,
@@ -90,8 +88,8 @@ class _LensWorldState extends State<LensWorld> {
                 padding: const EdgeInsets.all(2),
                 color: Colors.black.withOpacity(0.6),
                 child: Text(
-                  _translatedTexts.length > i ? _translatedTexts[i] : "",
-                  style: const TextStyle(color: Colors.yellow, fontSize: 10, fontWeight: FontWeight.bold),
+                  _translatedTexts[i],
+                  style: const TextStyle(color: Colors.yellow, fontSize: 10),
                 ),
               ),
             ),
@@ -103,7 +101,7 @@ class _LensWorldState extends State<LensWorld> {
               child: FloatingActionButton(
                 backgroundColor: Colors.redAccent,
                 onPressed: _processImage,
-                child: const Icon(Icons.camera_alt, color: Colors.white),
+                child: const Icon(Icons.camera_alt),
               ),
             ),
           ),
