@@ -13,7 +13,9 @@ class _LensWorldState extends State<LensWorld> {
   CameraController? _controller;
   final TextRecognizer _textRecognizer = TextRecognizer();
   final _translator = OnDeviceTranslator(sourceLanguage: TranslateLanguage.english, targetLanguage: TranslateLanguage.arabic);
-  List<RecognizedTextElement> _elements = [];
+  
+  // التعديل هنا: استخدام TextElement بدلاً من RecognizedTextElement
+  List<TextElement> _elements = [];
   List<String> _translatedTexts = [];
 
   @override
@@ -26,23 +28,29 @@ class _LensWorldState extends State<LensWorld> {
     final cameras = await availableCameras();
     _controller = CameraController(cameras[0], ResolutionPreset.high);
     await _controller!.initialize();
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   Future<void> _processImage() async {
+    if (_controller == null || !_controller!.value.isInitialized) return;
+    
     final image = await _controller!.takePicture();
     final inputImage = InputImage.fromFilePath(image.path);
     final recognizedText = await _textRecognizer.processImage(inputImage);
     
-    List<RecognizedTextElement> tempElements = [];
+    List<TextElement> tempElements = [];
     List<String> tempTranslations = [];
 
     for (TextBlock block in recognizedText.blocks) {
       for (TextLine line in block.lines) {
-        for (RecognizedTextElement element in line.elements) {
+        for (TextElement element in line.elements) {
           tempElements.add(element);
-          final translated = await _translator.translateText(element.text);
-          tempTranslations.add(translated);
+          try {
+            final translated = await _translator.translateText(element.text);
+            tempTranslations.add(translated);
+          } catch (e) {
+            tempTranslations.add(element.text); // لو فشل يرجع النص الأصلي
+          }
         }
       }
     }
@@ -54,24 +62,51 @@ class _LensWorldState extends State<LensWorld> {
   }
 
   @override
+  void dispose() {
+    _controller?.dispose();
+    _textRecognizer.close();
+    _translator.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (_controller == null || !_controller!.value.isInitialized) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_controller == null || !_controller!.value.isInitialized) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     
     return Scaffold(
+      appBar: AppBar(title: const Text("عدسة ميرور الذكية"), backgroundColor: Colors.transparent),
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           CameraPreview(_controller!),
-          // رسم الطبقة الشفافة فوق الكلام
+          // رسم الطبقة الشفافة (AR Overlay)
           for (int i = 0; i < _elements.length; i++)
             Positioned(
               left: _elements[i].boundingBox.left,
               top: _elements[i].boundingBox.top,
               child: Container(
-                color: Colors.black.withOpacity(0.7),
-                child: Text(_translatedTexts[i], style: const TextStyle(color: Colors.yellow, fontSize: 12)),
+                padding: const EdgeInsets.all(2),
+                color: Colors.black.withOpacity(0.6),
+                child: Text(
+                  _translatedTexts.length > i ? _translatedTexts[i] : "",
+                  style: const TextStyle(color: Colors.yellow, fontSize: 10, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
-          Positioned(bottom: 30, left: 150, child: FloatingActionButton(onPressed: _processImage, child: const Icon(Icons.camera))),
+          Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: FloatingActionButton(
+                backgroundColor: Colors.redAccent,
+                onPressed: _processImage,
+                child: const Icon(Icons.camera_alt, color: Colors.white),
+              ),
+            ),
+          ),
         ],
       ),
     );
