@@ -79,7 +79,7 @@ class _LensWorldState extends State<LensWorld> {
     return Scaffold(
       body: Stack(
         children: [
-          CameraPreview(_controller!),
+          _controller!.value.isInitialized ? AspectRatio(aspectRatio: _controller!.value.aspectRatio, child: CameraPreview(_controller!)) : Container(),
           for (int i = 0; i < _elements.length; i++)
             Positioned(
               left: _elements[i].boundingBox.left,

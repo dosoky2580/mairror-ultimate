@@ -1,90 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:google_mlkit_translation/google_mlkit_translation.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 
 class TranslatorWorld extends StatefulWidget {
   const TranslatorWorld({super.key});
-
   @override
   State<TranslatorWorld> createState() => _TranslatorWorldState();
 }
 
 class _TranslatorWorldState extends State<TranslatorWorld> {
-  final stt.SpeechToText _speech = stt.SpeechToText();
+  final TextEditingController _controller = TextEditingController();
+  String _translatedText = "";
+  final SpeechToText _speech = SpeechToText();
   final FlutterTts _tts = FlutterTts();
-  final TextEditingController _inputController = TextEditingController();
-  final TextEditingController _outputController = TextEditingController();
-  
-  TranslateLanguage _sourceLang = TranslateLanguage.arabic;
-  TranslateLanguage _targetLang = TranslateLanguage.english;
-  late OnDeviceTranslator _translator;
-
-  @override
-  void initState() {
-    super.initState();
-    _initTranslator();
-  }
-
-  void _initTranslator() {
-    _translator = OnDeviceTranslator(sourceLanguage: _sourceLang, targetLanguage: _targetLang);
-  }
+  final _translator = OnDeviceTranslator(sourceLanguage: TranslateLanguage.english, targetLanguage: TranslateLanguage.arabic);
 
   Future<void> _translate() async {
-    if (_inputController.text.isEmpty) return;
-    setState(() => _outputController.text = "جاري الترجمة...");
-    try {
-      final result = await _translator.translateText(_inputController.text);
-      setState(() => _outputController.text = result);
-    } catch (e) {
-      setState(() => _outputController.text = "تأكد من تحميل حزمة اللغة من الإعدادات");
+    if (_controller.text.isEmpty) return;
+    final result = await _translator.translateText(_controller.text);
+    setState(() => _translatedText = result);
+  }
+
+  Future<void> _listen() async {
+    bool available = await _speech.initialize();
+    if (available) {
+      _speech.listen(onResult: (val) => setState(() => _controller.text = val.recognizedWords));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(title: const Text("مترجم الـ 100 لغة"), backgroundColor: Colors.blueGrey[900]),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _langPicker(_sourceLang, (val) => setState(() { _sourceLang = val!; _initTranslator(); })),
-                const Icon(Icons.swap_horiz, color: Colors.blue),
-                _langPicker(_targetLang, (val) => setState(() { _targetLang = val!; _initTranslator(); })),
-              ],
+      backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        title: const Text("مترجم الـ 100 لغة"),
+        actions: [
+          IconButton(icon: const Icon(Icons.share), onPressed: () => Share.share(_translatedText)),
+          IconButton(icon: const Icon(Icons.copy), onPressed: () => Clipboard.setData(ClipboardData(text: _translatedText))),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _controller,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: "اكتب أو استعمل المايك...",
+                suffixIcon: IconButton(icon: const Icon(Icons.paste, color: Colors.blue), onPressed: () async {
+                  var data = await Clipboard.getData('text/plain');
+                  if (data != null) _controller.text = data.text!;
+                }),
+              ),
             ),
-            const SizedBox(height: 20),
-            _inputBox(),
-            const SizedBox(height: 20),
-            _outputBox(),
-            const Spacer(),
-            _buildControls(),
-          ],
-        ),
+          ),
+          ElevatedButton(onPressed: _translate, child: const Text("ترجم الآن")),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
+              child: SelectableText(_translatedText, style: const TextStyle(color: Colors.greenAccent, fontSize: 18)),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              FloatingActionButton(onPressed: _listen, backgroundColor: Colors.blue, child: const Icon(Icons.mic)),
+              FloatingActionButton(onPressed: () => _tts.speak(_translatedText), backgroundColor: Colors.green, child: const Icon(Icons.volume_up)),
+            ],
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
-
-  Widget _langPicker(TranslateLanguage current, ValueChanged<TranslateLanguage?> onChange) {
-    return DropdownButton<TranslateLanguage>(
-      value: current,
-      dropdownColor: Colors.grey[900],
-      style: const TextStyle(color: Colors.white),
-      items: TranslateLanguage.values.map((lang) => DropdownMenuItem(value: lang, child: Text(lang.name.toUpperCase()))).toList(),
-      onChanged: onChange,
-    );
-  }
-
-  Widget _inputBox() => TextField(controller: _inputController, maxLines: 3, style: const TextStyle(color: Colors.white), decoration: InputDecoration(filled: true, fillColor: Colors.grey[900], hintText: "اكتب هنا...", border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))));
-  Widget _outputBox() => TextField(controller: _outputController, readOnly: true, maxLines: 3, style: const TextStyle(color: Colors.greenAccent), decoration: InputDecoration(filled: true, fillColor: Colors.grey[900], hintText: "الترجمة ستظهر هنا", border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))));
-  
-  Widget _buildControls() => Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-    CircleAvatar(radius: 30, backgroundColor: Colors.blue, child: IconButton(icon: const Icon(Icons.mic, color: Colors.white), onPressed: () {})),
-    CircleAvatar(radius: 30, backgroundColor: Colors.green, child: IconButton(icon: const Icon(Icons.translate, color: Colors.white), onPressed: _translate)),
-  ]);
 }
