@@ -15,7 +15,6 @@ allprojects {
         google()
         mavenCentral()
     }
-    // 🔥 كود الحقن الذكي لإصلاح المكتبات القديمة (Namespace Fix)
     subprojects {
         afterEvaluate { project ->
             if (project.hasProperty('android')) {
