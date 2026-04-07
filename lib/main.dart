@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  // تشغيل التطبيق فوراً بدون انتظار المكتبات
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MairrorApp());
 }
@@ -12,51 +11,52 @@ class MairrorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Mairror Ultimate',
       theme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue),
-      // الدخول لصفحة خفيفة أولاً
-      home: const FastSplashScreen(),
+      home: const MainWorldsScreen(), // الدخول مباشرة للواجهة
     );
   }
 }
 
-class FastSplashScreen extends StatefulWidget {
-  const FastSplashScreen({super.key});
-
-  @override
-  State<FastSplashScreen> createState() => _FastSplashScreenState();
-}
-
-class _FastSplashScreenState extends State<FastSplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // تحميل المكتبات الثقيلة في الخلفية بعد ظهور الشاشة
-    _loadEngines();
-  }
-
-  Future<void> _loadEngines() async {
-    await Future.delayed(const Duration(seconds: 2));
-    // هنا ممكن تضيف محركاتك تدريجياً
-    if (mounted) {
-       // الانتقال للواجهة الرئيسية بعد التحميل
-       // Navigator.of(context).pushReplacement(...)
-    }
-  }
+class MainWorldsScreen extends StatelessWidget {
+  const MainWorldsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
+      appBar: AppBar(
+        title: const Text("Mairror Ultimate"),
+        centerTitle: true,
+        backgroundColor: Colors.blueGrey[900],
+      ),
+      body: GridView.count(
+        padding: const EdgeInsets.all(20),
+        crossAxisCount: 2,
+        children: [
+          _buildWorldCard(context, "عالم العدسة", Icons.camera_alt, Colors.red),
+          _buildWorldCard(context, "عالم المترجم", Icons.translate, Colors.blue),
+          _buildWorldCard(context, "عالم المستندات", Icons.description, Colors.green),
+          _buildWorldCard(context, "ساحة الألعاب", Icons.sports_esports, Colors.purple),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWorldCard(BuildContext context, String title, IconData icon, Color color) {
+    return Card(
+      color: Colors.grey[900],
+      child: InkWell(
+        onTap: () {
+          // هنا يتم تحميل المكتبات الخاصة بكل عالم عند الضغط عليه فقط
+        },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Mairror Ultimate", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-            SizedBox(height: 20),
-            CircularProgressIndicator(color: Colors.blue),
-            SizedBox(height: 10),
-            Text("جاري تحضير العوالم...", style: TextStyle(color: Colors.grey)),
+            Icon(icon, size: 50, color: color),
+            const SizedBox(height: 10),
+            Text(title, style: const TextStyle(color: Colors.white, fontSize: 16)),
           ],
         ),
       ),
