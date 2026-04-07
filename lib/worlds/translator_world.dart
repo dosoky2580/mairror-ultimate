@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:share_plus/share_plus.dart';
 
 class TranslatorWorld extends StatefulWidget {
   const TranslatorWorld({super.key});
@@ -12,20 +14,8 @@ class TranslatorWorld extends StatefulWidget {
 class _TranslatorWorldState extends State<TranslatorWorld> {
   final stt.SpeechToText _speech = stt.SpeechToText();
   final FlutterTts _tts = FlutterTts();
-  String _originalText = "اضغط وابدأ الكلام...";
-  String _translatedText = "";
+  final TextEditingController _controller = TextEditingController();
   bool _isListening = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _setupTts();
-  }
-
-  void _setupTts() {
-    _tts.setLanguage("ar-SA"); // لغة الرد الأساسية
-    _tts.setPitch(1.0);
-  }
 
   void _listen() async {
     if (!_isListening) {
@@ -34,11 +24,8 @@ class _TranslatorWorldState extends State<TranslatorWorld> {
         setState(() => _isListening = true);
         _speech.listen(onResult: (val) {
           setState(() {
-            _originalText = val.recognizedWords;
+            _controller.text = val.recognizedWords;
           });
-          if (val.finalResult) {
-            _translateAndSpeak(_originalText);
-          }
         });
       }
     } else {
@@ -47,18 +34,26 @@ class _TranslatorWorldState extends State<TranslatorWorld> {
     }
   }
 
-  // محاكاة للترجمة والرد الصوتي (سيتم ربطها بـ API لاحقاً)
-  Future<void> _translateAndSpeak(String text) async {
-    setState(() => _isListening = false);
-    
-    // مثال للرد التفاعلي من أدهم
-    if (text.contains("ادهم")) {
-      String response = "مساء الفل يا تامر، أنا سامعك ومستعد للترجمة.";
-      setState(() => _translatedText = response);
-      await _tts.speak(response);
-    } else {
-      // هنا ستوضع معادلة الترجمة الفعلية
-      setState(() => _translatedText = "جاري معالجة الترجمة لـ: $text");
+  // دالة النسخ
+  void _copyToClipboard() {
+    Clipboard.setData(ClipboardData(text: _controller.text));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("تم نسخ النص!")));
+  }
+
+  // دالة اللصق
+  void _pasteFromClipboard() async {
+    ClipboardData? data = await Clipboard.getData('text/plain');
+    if (data != null) {
+      setState(() {
+        _controller.text = data.text ?? "";
+      });
+    }
+  }
+
+  // دالة المشاركة (نص وصوت)
+  void _shareContent() {
+    if (_controller.text.isNotEmpty) {
+      Share.share(_controller.text, subject: 'ترجمة ميرور ألتيميت');
     }
   }
 
@@ -67,49 +62,59 @@ class _TranslatorWorldState extends State<TranslatorWorld> {
     return Scaffold(
       backgroundColor: const Color(0xFF0F1014),
       appBar: AppBar(
-        title: const Text("عالم المترجم"),
+        title: const Text("عالم المترجم الذكي"),
         backgroundColor: Colors.blueAccent,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 30),
-          _buildChatBubble(_originalText, true),
-          const SizedBox(height: 20),
-          if (_translatedText.isNotEmpty) _buildChatBubble(_translatedText, false),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.bottom(50),
-            child: GestureDetector(
-              onTap: _listen,
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: _isListening ? Colors.redAccent : Colors.blueAccent,
-                  shape: BoxShape.circle,
-                  boxShadow: [BoxShadow(color: Colors.blue.withOpacity(0.5), blurRadius: 20)],
-                ),
-                child: Icon(_isListening ? Icons.stop : Icons.mic, size: 40, color: Colors.white),
-              ),
-            ),
-          ),
+        actions: [
+          IconButton(icon: const Icon(Icons.content_paste), onPressed: _pasteFromClipboard),
+          IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard),
+          IconButton(icon: const Icon(Icons.share), onPressed: _shareContent),
         ],
       ),
-    );
-  }
-
-  Widget _buildChatBubble(String text, bool isOriginal) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: isOriginal ? Colors.grey[900] : Colors.blueGrey[800],
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.white, fontSize: 18),
-        textAlign: TextAlign.right,
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey[900],
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
+                ),
+                child: TextField(
+                  controller: _controller,
+                  maxLines: null,
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  decoration: const InputDecoration(
+                    hintText: "اكتب هنا أو استخدم المايك...",
+                    hintStyle: TextStyle(color: Colors.grey),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FloatingActionButton(
+                  heroTag: "mic",
+                  onPressed: _listen,
+                  backgroundColor: _isListening ? Colors.red : Colors.blueAccent,
+                  child: Icon(_isListening ? Icons.stop : Icons.mic),
+                ),
+                FloatingActionButton(
+                  heroTag: "speak",
+                  onPressed: () => _tts.speak(_controller.text),
+                  backgroundColor: Colors.greenAccent,
+                  child: const Icon(Icons.volume_up, color: Colors.black),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+          ],
+        ),
       ),
     );
   }
