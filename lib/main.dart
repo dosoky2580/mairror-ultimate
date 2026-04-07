@@ -1,3 +1,4 @@
+import 'package:mairror_ultimate/worlds/docs_world.dart';
 import 'package:mairror_ultimate/worlds/lens_world.dart';
 import 'package:flutter/material.dart';
 import 'package:mairror_ultimate/worlds/translator_world.dart'; // تأكد من اسم الباكيج صح
@@ -37,7 +38,7 @@ class MainWorldsScreen extends StatelessWidget {
         children: [
           _buildWorldCard(context, "عالم العدسة", Icons.camera_alt, Colors.redAccent, const LensWorld()),
           _buildWorldCard(context, "عالم المترجم", Icons.translate, Colors.blueAccent, const TranslatorWorld()),
-          _buildWorldCard(context, "عالم المستندات", Icons.description, Colors.greenAccent, null),
+          _buildWorldCard(context, "عالم المستندات", Icons.description, Colors.greenAccent, const DocsWorld()),
           _buildWorldCard(context, "ساحة الألعاب", Icons.sports_esports, Colors.purpleAccent, null),
         ],
       ),
