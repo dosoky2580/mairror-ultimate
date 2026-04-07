@@ -16,12 +16,15 @@ dependencies:
   share_plus: ^10.1.0
   speech_to_text: ^6.6.2
   flutter_tts: ^4.2.2
-  google_ml_kit: ^0.16.3
+  # الضبط الجديد لـ ML Kit لإنهاء التعارض
+  google_ml_kit: ^0.19.0
   google_mlkit_text_recognition: ^0.14.0
   google_mlkit_commons: ^0.9.0
+  # الملفات والـ PDF
   file_picker: ^8.0.0
   pdf: ^3.11.1
   printing: ^5.13.2
+  vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:
