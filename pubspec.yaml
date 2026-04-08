@@ -21,9 +21,9 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.13.2
   vector_math: ^2.1.4
-  # المكتبات الجديدة لدعم PDF المتقدم والمشاركة
   syncfusion_flutter_pdf: ^25.1.37
-  pdf_render: ^1.5.0
+  # التعديل هنا للإصدار المستقر والمطلوب من جيت هب
+  pdf_render: ^1.4.12
 
 dev_dependencies:
   flutter_test:
