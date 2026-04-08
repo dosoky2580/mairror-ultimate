@@ -11,8 +11,8 @@ dependencies:
   http: ^1.2.2
   camera: ^0.11.0+2
   path_provider: ^2.1.5
-  # ضبطنا الإصدار ده عشان يتوافق مع الكل
-  share_plus: ^9.0.0
+  # التحديث المقترح لحل تعارض مكتبة web
+  share_plus: ^12.0.2
   speech_to_text: ^7.0.0
   flutter_tts: ^4.2.2
   google_ml_kit: ^0.19.0
@@ -23,7 +23,6 @@ dependencies:
   printing: ^5.13.2
   vector_math: ^2.1.4
   syncfusion_flutter_pdf: ^25.1.37
-  # المحرك الشامل والجديد للـ PDF
   pdfx: ^2.4.0
 
 dev_dependencies:
