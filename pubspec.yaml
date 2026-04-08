@@ -22,8 +22,8 @@ dependencies:
   printing: ^5.13.2
   vector_math: ^2.1.4
   syncfusion_flutter_pdf: ^25.1.37
-  # البديل الأقوى والأكثر استقراراً في 2026
-  native_pdf_renderer: ^6.0.0
+  # استخدام الإصدار المستقر والمضمون 100%
+  native_pdf_renderer: ^5.0.0
 
 dev_dependencies:
   flutter_test:
