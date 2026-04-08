@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'package:google_mlkit_translation/google_mlkit_translation.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
 
 class TranslatorWorld extends StatefulWidget {
   const TranslatorWorld({super.key});
@@ -12,70 +12,94 @@ class TranslatorWorld extends StatefulWidget {
 }
 
 class _TranslatorWorldState extends State<TranslatorWorld> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _inputController = TextEditingController();
   String _translatedText = "";
-  final SpeechToText _speech = SpeechToText();
   final FlutterTts _tts = FlutterTts();
-  final _translator = OnDeviceTranslator(sourceLanguage: TranslateLanguage.english, targetLanguage: TranslateLanguage.arabic);
+  final SpeechToText _stt = SpeechToText();
+  bool _isListening = false;
 
-  Future<void> _translate() async {
-    if (_controller.text.isEmpty) return;
-    final result = await _translator.translateText(_controller.text);
-    setState(() => _translatedText = result);
-  }
-
-  Future<void> _listen() async {
-    bool available = await _speech.initialize();
-    if (available) {
-      _speech.listen(onResult: (val) => setState(() => _controller.text = val.recognizedWords));
+  Future<void> _runTranslation() async {
+    if (_inputController.text.isEmpty) return;
+    setState(() => _translatedText = "جاري الترجمة...");
+    final translator = OnDeviceTranslator(
+      sourceLanguage: TranslateLanguage.arabic,
+      targetLanguage: TranslateLanguage.turkish,
+    );
+    try {
+      final result = await translator.translateText(_inputController.text);
+      setState(() => _translatedText = result);
+    } catch (e) {
+      setState(() => _translatedText = "خطأ في المحرك");
     }
+    translator.close();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
-      appBar: AppBar(
-        title: const Text("مترجم الـ 100 لغة"),
-        actions: [
-          IconButton(icon: const Icon(Icons.share), onPressed: () => Share.share(_translatedText)),
-          IconButton(icon: const Icon(Icons.copy), onPressed: () => Clipboard.setData(ClipboardData(text: _translatedText))),
-        ],
+      backgroundColor: Colors.black,
+      appBar: AppBar(title: const Text("أدهم AI - المترجم الشامل"), backgroundColor: Colors.blueGrey[900]),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          children: [
+            _buildBox("خانة الإدخال", _inputController, true),
+            const Icon(Icons.swap_vert, color: Colors.blue, size: 30),
+            _buildBox("الترجمة النهائية", TextEditingController(text: _translatedText), false),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FloatingActionButton(
+                  heroTag: "mic",
+                  backgroundColor: _isListening ? Colors.red : Colors.blue,
+                  onPressed: () async {
+                    if (!_isListening) {
+                      bool available = await _stt.initialize();
+                      if (available) {
+                        setState(() => _isListening = true);
+                        _stt.listen(onResult: (val) => setState(() => _inputController.text = val.recognizedWords));
+                      }
+                    } else {
+                      setState(() => _isListening = false);
+                      _stt.stop();
+                    }
+                  },
+                  child: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                ),
+                FloatingActionButton(
+                  heroTag: "trans",
+                  backgroundColor: Colors.green,
+                  onPressed: _runTranslation,
+                  child: const Icon(Icons.translate),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
-      body: Column(
+    );
+  }
+
+  Widget _buildBox(String label, TextEditingController ctrl, bool isInput) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white24)),
+      child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _controller,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "اكتب أو استعمل المايك...",
-                suffixIcon: IconButton(icon: const Icon(Icons.paste, color: Colors.blue), onPressed: () async {
-                  var data = await Clipboard.getData('text/plain');
-                  if (data != null) _controller.text = data.text!;
-                }),
-              ),
-            ),
-          ),
-          ElevatedButton(onPressed: _translate, child: const Text("ترجم الآن")),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
-              child: SelectableText(_translatedText, style: const TextStyle(color: Colors.greenAccent, fontSize: 18)),
-            ),
-          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              FloatingActionButton(onPressed: _listen, backgroundColor: Colors.blue, child: const Icon(Icons.mic)),
-              FloatingActionButton(onPressed: () => _tts.speak(_translatedText), backgroundColor: Colors.green, child: const Icon(Icons.volume_up)),
+              Text(label, style: const TextStyle(color: Colors.blueAccent)),
+              Row(children: [
+                IconButton(icon: const Icon(Icons.copy, color: Colors.grey, size: 20), onPressed: () => Clipboard.setData(ClipboardData(text: ctrl.text))),
+                IconButton(icon: const Icon(Icons.share, color: Colors.green, size: 20), onPressed: () => Share.share(ctrl.text)),
+                if (!isInput) IconButton(icon: const Icon(Icons.volume_up, color: Colors.orange, size: 20), onPressed: () => _tts.speak(ctrl.text)),
+              ]),
             ],
           ),
-          const SizedBox(height: 20),
+          TextField(controller: ctrl, maxLines: 4, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(border: InputBorder.none)),
         ],
       ),
     );

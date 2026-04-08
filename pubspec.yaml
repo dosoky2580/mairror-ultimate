@@ -1,6 +1,6 @@
 name: mairror_ultimate
-description: Mirror Ultimate 2026 - The Masterpiece.
-version: 1.1.0+2
+description: Mirror Ultimate 2026 - Master Engine.
+version: 2.0.0+1
 environment:
   sdk: '>=3.3.0 <4.0.0'
 
@@ -8,22 +8,19 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  http: ^1.2.2
-  camera: ^0.11.0+2
-  path_provider: ^2.1.5
-  # التحديث المقترح لحل تعارض مكتبة web
-  share_plus: ^12.0.2
-  speech_to_text: ^7.0.0
-  flutter_tts: ^4.2.2
-  google_ml_kit: ^0.19.0
-  google_mlkit_text_recognition: ^0.14.0
   google_mlkit_translation: ^0.12.0
-  file_picker: ^8.1.7
-  pdf: ^3.11.1
-  printing: ^5.13.2
-  vector_math: ^2.1.4
-  syncfusion_flutter_pdf: ^25.1.37
+  google_mlkit_text_recognition: ^0.14.0
+  google_mlkit_language_id: ^0.11.0
+  flutter_tts: ^4.2.2
+  speech_to_text: ^7.0.0
   pdfx: ^2.4.0
+  printing: ^5.13.2
+  path_provider: ^2.1.5
+  file_picker: ^8.1.7
+  share_plus: ^12.0.2
+  camera: ^0.11.0+2
+  permission_handler: ^11.3.1
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
